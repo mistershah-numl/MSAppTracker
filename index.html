@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MS Application Tracker — Muhammad Shah</title>
+<style>
+/* ── TOKENS ── */
+:root{
+  --bg:#0b1520;--bg2:#111e2e;--bg3:#172338;--bg4:#1e2f45;
+  --bdr:#253a55;--bdr2:#2e4868;
+  --txt:#dde3ee;--dim:#6b82a0;--dim2:#8fa4c0;
+  --gold:#c9923a;--gold2:#e8b060;
+  --teal:#4fa09a;--sage:#6aaa7e;--coral:#d9604a;
+  --lav:#8a7dcb;--sky:#5b9fcf;--amber:#d4a520;
+  --red:#c0392b;--green:#27ae60;
+  --mono:'SF Mono',Monaco,'Cascadia Code','Fira Code',monospace;
+  --serif:Georgia,'Iowan Old Style','Source Serif Pro',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --r:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:14px;min-height:100vh;}
+
+/* ── LOCK SCREEN ── */
+#lockScreen{
+  position:fixed;inset:0;background:var(--bg);z-index:999;
+  display:flex;align-items:center;justify-content:center;
+}
+.lock-box{
+  background:var(--bg2);border:1px solid var(--bdr2);border-radius:10px;
+  padding:40px 36px;width:100%;max-width:380px;text-align:center;
+}
+.lock-logo{width:52px;height:52px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:18px;font-weight:700;color:var(--bg);margin:0 auto 18px;}
+.lock-box h2{font-family:var(--serif);font-size:22px;margin-bottom:6px;}
+.lock-box p{font-size:13px;color:var(--dim);margin-bottom:22px;line-height:1.5;}
+.lock-box input{width:100%;background:var(--bg3);color:var(--txt);border:1px solid var(--bdr);border-radius:var(--r);padding:11px 14px;font-family:var(--mono);font-size:15px;letter-spacing:.2em;text-align:center;margin-bottom:12px;}
+.lock-box input:focus{outline:1px solid var(--gold);border-color:var(--gold);}
+.lock-box button{width:100%;background:var(--gold);color:var(--bg);border:none;border-radius:var(--r);padding:11px;font-family:var(--mono);font-size:13px;font-weight:700;cursor:pointer;}
+.lock-box button:hover{background:var(--gold2);}
+.lock-err{color:var(--coral);font-size:12px;margin-top:8px;min-height:16px;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:12px 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:30px;height:30px;background:var(--gold);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--bg);flex-shrink:0;}
+.logo-text{font-family:var(--serif);font-size:16px;font-weight:700;}
+.logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);}
+.topbar-r{display:flex;gap:8px;align-items:center;}
+.sync-status{font-family:var(--mono);font-size:10px;padding:4px 10px;border-radius:20px;border:1px solid var(--bdr);}
+.sync-status.ok{color:var(--green);border-color:var(--green);}
+.sync-status.loading{color:var(--amber);border-color:var(--amber);}
+.sync-status.err{color:var(--coral);border-color:var(--coral);}
+.btn-primary{background:var(--gold);color:var(--bg);border:none;border-radius:var(--r);padding:8px 14px;font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;transition:background .15s;}
+.btn-primary:hover{background:var(--gold2);}
+.btn-ghost{background:transparent;color:var(--dim2);border:1px solid var(--bdr2);border-radius:var(--r);padding:7px 12px;font-family:var(--mono);font-size:11px;cursor:pointer;transition:all .15s;}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ── STAT STRIP ── */
+.stat-strip{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:10px 22px;display:flex;gap:0;overflow-x:auto;cursor:pointer;}
+.stat{flex:1;min-width:88px;padding:7px 12px;border-right:1px solid var(--bdr);display:flex;flex-direction:column;align-items:center;gap:2px;transition:background .12s;border-radius:4px;}
+.stat:last-child{border-right:none;}
+.stat:hover{background:var(--bg3);}
+.stat.active-filter{background:var(--bg4);outline:1px solid var(--gold);}
+.stat-num{font-family:var(--serif);font-size:24px;font-weight:700;line-height:1;}
+.stat-lbl{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);}
+.s-total .stat-num{color:var(--txt);}
+.s-na .stat-num{color:var(--dim2);}
+.s-ap .stat-num{color:var(--sky);}
+.s-wr .stat-num{color:var(--amber);}
+.s-in .stat-num{color:var(--lav);}
+.s-of .stat-num{color:var(--green);}
+.s-re .stat-num{color:var(--coral);}
+.s-sc .stat-num{color:var(--gold);}
+
+/* ── CONTROLS ── */
+.controls{padding:12px 22px;display:flex;gap:8px;flex-wrap:wrap;background:var(--bg);border-bottom:1px solid var(--bdr);position:sticky;top:57px;z-index:90;}
+.search-wrap{position:relative;flex:1;min-width:200px;}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.4;width:13px;height:13px;}
+input.sinp{width:100%;background:var(--bg3);color:var(--txt);border:1px solid var(--bdr);border-radius:var(--r);padding:8px 11px 8px 32px;font-size:13px;}
+input.sinp:focus{outline:1px solid var(--gold);border-color:var(--gold);}
+select.ctrl{background:var(--bg3);color:var(--txt);border:1px solid var(--bdr);border-radius:var(--r);padding:8px 11px;font-size:13px;min-width:140px;cursor:pointer;}
+select.ctrl:focus{outline:1px solid var(--gold);}
+.vbtns{display:flex;gap:4px;}
+.vbtn{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r);padding:7px 9px;cursor:pointer;color:var(--dim);transition:all .15s;}
+.vbtn.active,.vbtn:hover{background:var(--gold);border-color:var(--gold);color:var(--bg);}
+.vbtn svg{width:15px;height:15px;display:block;}
+
+/* ── MAIN ── */
+.main{padding:18px 22px 80px;}
+.empty-state{text-align:center;padding:70px 20px;color:var(--dim);border:1px dashed var(--bdr2);border-radius:10px;}
+.empty-state .big{font-family:var(--serif);font-size:20px;color:var(--dim2);margin-bottom:8px;}
+.empty-state p{font-size:13px;line-height:1.6;max-width:360px;margin:0 auto 18px;}
+
+/* ── GRID ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px;}
+.card{background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;border-left:3px solid var(--bdr);padding:14px;display:flex;flex-direction:column;gap:8px;transition:transform .12s,border-color .12s;position:relative;}
+.card:hover{transform:translateY(-2px);border-color:var(--bdr2);}
+.card[data-s="Not Applied"]{border-left-color:var(--dim);}
+.card[data-s="Applied"]{border-left-color:var(--sky);}
+.card[data-s="Waiting for Response"]{border-left-color:var(--amber);}
+.card[data-s="Interview"]{border-left-color:var(--lav);}
+.card[data-s="Offer Received"]{border-left-color:var(--green);}
+.card[data-s="Rejected"]{border-left-color:var(--red);}
+.card[data-s="Scholarship"]{border-left-color:var(--gold);}
+
+.card-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.card-name{font-family:var(--serif);font-size:15px;font-weight:700;line-height:1.3;flex:1;}
+.fit-star{color:var(--gold);font-size:12px;margin-left:3px;}
+.spill{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;border-radius:20px;padding:3px 8px;white-space:nowrap;flex-shrink:0;border:1px solid currentColor;}
+.sp-na{color:var(--dim);} .sp-ap{color:var(--sky);} .sp-wr{color:var(--amber);}
+.sp-in{color:var(--lav);} .sp-of{color:var(--green);} .sp-re{color:var(--red);} .sp-sc{color:var(--gold);}
+.card-uni{font-size:11.5px;color:var(--dim2);}
+.ctag{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--lav);margin-left:6px;}
+.chips{display:flex;flex-wrap:wrap;gap:4px;}
+.chip{font-size:10px;color:var(--dim);background:rgba(255,255,255,.03);border:1px solid var(--bdr);border-radius:20px;padding:2px 7px;display:flex;align-items:center;gap:3px;}
+.cdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.card-note{font-size:12px;color:#b8c4d8;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.card-meta{display:flex;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;color:var(--dim);}
+.card-meta a{color:var(--sky);text-decoration:none;}
+.card-meta a:hover{text-decoration:underline;}
+.card-foot{display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--bdr);}
+.card-date{font-family:var(--mono);font-size:9.5px;color:var(--dim);}
+.card-acts{display:flex;gap:5px;}
+.ibtn{background:none;border:1px solid var(--bdr);border-radius:4px;padding:4px 8px;cursor:pointer;color:var(--dim);font-size:10.5px;font-family:var(--mono);transition:all .15s;display:flex;align-items:center;gap:3px;}
+.ibtn:hover{border-color:var(--gold);color:var(--gold);}
+.ibtn.del:hover{border-color:var(--red);color:var(--red);}
+.ibtn.del:disabled,.ibtn:disabled{opacity:.4;cursor:not-allowed;}
+.ibtn svg{width:11px;height:11px;}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding:9px 11px;text-align:left;border-bottom:1px solid var(--bdr);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--bdr);transition:background .1s;}
+tbody tr:hover{background:var(--bg3);}
+tbody td{padding:9px 11px;vertical-align:middle;}
+.tbl-name{font-family:var(--serif);font-size:13.5px;font-weight:700;}
+.tbl-uni{font-size:11.5px;color:var(--dim2);}
+.tbl-note{font-size:11.5px;color:var(--dim2);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tbl-acts{display:flex;gap:4px;}
+
+/* ── MODAL ── */
+.ov{position:fixed;inset:0;background:rgba(5,12,22,.88);z-index:200;display:none;align-items:center;justify-content:center;padding:14px;}
+.ov.on{display:flex;}
+.mform{background:var(--bg2);border:1px solid var(--bdr2);border-radius:10px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;display:flex;flex-direction:column;}
+.mfhdr{padding:18px 22px 14px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:2;}
+.mftitle{font-family:var(--serif);font-size:19px;font-weight:700;}
+.mclose{background:none;border:none;color:var(--dim);font-size:22px;cursor:pointer;line-height:1;padding:4px;}
+.mclose:hover{color:var(--txt);}
+.mfbody{padding:18px 22px;display:flex;flex-direction:column;gap:16px;}
+.mffooter{padding:12px 22px;border-top:1px solid var(--bdr);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg2);z-index:2;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fld{display:flex;flex-direction:column;gap:5px;}
+.fld.full{grid-column:1/-1;}
+.fld label{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim2);}
+.fld label .req{color:var(--gold);}
+.fld input,.fld select,.fld textarea{background:var(--bg3);color:var(--txt);border:1px solid var(--bdr);border-radius:5px;padding:8px 11px;font-family:var(--sans);font-size:13px;width:100%;}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:1px solid var(--gold);border-color:var(--gold);}
+.fld textarea{resize:vertical;min-height:76px;line-height:1.5;}
+.fld .hint{font-size:11px;color:var(--dim);}
+.fsec{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--bdr);padding-bottom:5px;}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* ── CONFIRM ── */
+.mconfirm{background:var(--bg2);border:1px solid var(--bdr2);border-radius:10px;width:100%;max-width:380px;padding:26px;display:flex;flex-direction:column;gap:14px;}
+.mconfirm h3{font-family:var(--serif);font-size:17px;}
+.mconfirm p{font-size:13px;color:var(--dim2);line-height:1.6;}
+.mconfirm-acts{display:flex;justify-content:flex-end;gap:8px;}
+.btn-danger{background:var(--red);color:#fff;border:none;border-radius:var(--r);padding:8px 14px;font-family:var(--mono);font-size:11px;cursor:pointer;}
+.btn-danger:hover{background:#e74c3c;}
+
+/* ── DETAIL ── */
+.mdetail{background:var(--bg2);border:1px solid var(--bdr2);border-radius:10px;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;}
+.dthdr{padding:18px 22px 14px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+.dtname{font-family:var(--serif);font-size:20px;font-weight:700;line-height:1.3;}
+.dtbody{padding:18px 22px;display:flex;flex-direction:column;gap:13px;}
+.drow{display:flex;gap:10px;}
+.dlbl{font-family:var(--mono);font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);min-width:88px;flex-shrink:0;padding-top:2px;}
+.dval{font-size:13px;color:var(--txt);line-height:1.55;word-break:break-word;}
+.dval a{color:var(--sky);text-decoration:none;}
+.dval a:hover{text-decoration:underline;}
+.dval.none{color:var(--dim);font-style:italic;}
+.dchips{display:flex;flex-wrap:wrap;gap:5px;}
+.dtfoot{padding:12px 22px;border-top:1px solid var(--bdr);display:flex;gap:8px;justify-content:flex-end;}
+.pbtn{color:var(--sky);border:1px solid var(--sky);border-radius:4px;padding:6px 12px;font-size:11px;font-family:var(--mono);text-decoration:none;}
+.pbtn:hover{background:var(--sky);color:var(--bg);}
+
+/* ── SPINNER ── */
+.spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:currentColor;border-radius:50%;animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── TOAST ── */
+.toasts{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;flex-direction:column;gap:7px;}
+.toast{background:var(--bg3);border:1px solid var(--bdr2);border-radius:6px;padding:11px 15px;font-size:13px;color:var(--txt);animation:tIn .22s ease;min-width:210px;max-width:300px;}
+.toast.success{border-left:3px solid var(--green);}
+.toast.error{border-left:3px solid var(--red);}
+.toast.info{border-left:3px solid var(--sky);}
+@keyframes tIn{from{transform:translateX(30px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes tOut{from{transform:translateX(0);opacity:1}to{transform:translateX(30px);opacity:0}}
+.toast.out{animation:tOut .22s ease forwards;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:580px){
+  .topbar{padding:10px 14px;}
+  .controls{padding:10px 14px;top:53px;}
+  .main{padding:14px 14px 80px;}
+  .frow,.sgrid{grid-template-columns:1fr;}
+  .grid{grid-template-columns:1fr;}
+  .logo-sub{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOCK SCREEN ── -->
+<div id="lockScreen">
+  <div class="lock-box">
+    <div class="lock-logo">MS</div>
+    <h2>Application Tracker</h2>
+    <p>Muhammad Shah — MS Fall 2027<br>Enter your access password to continue.</p>
+    <input type="password" id="lockInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')unlock()">
+    <button onclick="unlock()">Unlock →</button>
+    <div class="lock-err" id="lockErr"></div>
+  </div>
+</div>
+
+<!-- ── TOPBAR ── -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">MS</div>
+    <div>
+      <div class="logo-text">Application Tracker</div>
+      <div class="logo-sub">Muhammad Shah — AI × Blockchain × Cyber</div>
+    </div>
+  </div>
+  <div class="topbar-r">
+    <span class="sync-status loading" id="syncStatus">⟳ Connecting…</span>
+    <button class="btn-ghost" onclick="loadEntries()">↺ Refresh</button>
+    <button class="btn-primary" onclick="openForm()">+ Add Entry</button>
+  </div>
+</div>
+
+<!-- ── STAT STRIP ── -->
+<div class="stat-strip" id="statStrip">
+  <div class="stat s-total" data-filter=""><div class="stat-num" id="st-t">0</div><div class="stat-lbl">Total</div></div>
+  <div class="stat s-na"    data-filter="Not Applied"><div class="stat-num" id="st-na">0</div><div class="stat-lbl">Not Applied</div></div>
+  <div class="stat s-ap"    data-filter="Applied"><div class="stat-num" id="st-ap">0</div><div class="stat-lbl">Applied</div></div>
+  <div class="stat s-wr"    data-filter="Waiting for Response"><div class="stat-num" id="st-wr">0</div><div class="stat-lbl">Waiting</div></div>
+  <div class="stat s-in"    data-filter="Interview"><div class="stat-num" id="st-in">0</div><div class="stat-lbl">Interview</div></div>
+  <div class="stat s-of"    data-filter="Offer Received"><div class="stat-num" id="st-of">0</div><div class="stat-lbl">Offer</div></div>
+  <div class="stat s-re"    data-filter="Rejected"><div class="stat-num" id="st-re">0</div><div class="stat-lbl">Rejected</div></div>
+  <div class="stat s-sc"    data-filter="Scholarship"><div class="stat-num" id="st-sc">0</div><div class="stat-lbl">Scholarship</div></div>
+</div>
+
+<!-- ── CONTROLS ── -->
+<div class="controls">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input class="sinp" id="searchInp" type="text" placeholder="Search professor, university, keyword…" oninput="renderAll()">
+  </div>
+  <select class="ctrl" id="fCountry" onchange="renderAll()">
+    <option value="">All Countries</option>
+    <option>Canada</option><option>USA</option><option>Other</option>
+  </select>
+  <select class="ctrl" id="fStatus" onchange="renderAll()">
+    <option value="">All Statuses</option>
+    <option>Not Applied</option><option>Applied</option>
+    <option>Waiting for Response</option><option>Interview</option>
+    <option>Offer Received</option><option>Rejected</option><option>Scholarship</option>
+  </select>
+  <select class="ctrl" id="fType" onchange="renderAll()">
+    <option value="">All Types</option>
+    <option>Professor</option><option>University Program</option><option>Scholarship</option>
+  </select>
+  <select class="ctrl" id="fFunding" onchange="renderAll()">
+    <option value="">All Funding</option>
+    <option>Fully Funded</option><option>RA Likely</option>
+    <option>TA Available</option><option>Scholarship Pool</option><option>Ask Directly</option>
+  </select>
+  <div class="vbtns">
+    <button class="vbtn active" id="btnGrid" onclick="setView('grid')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>
+    </button>
+    <button class="vbtn" id="btnTable" onclick="setView('table')">
+      <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="5" width="18" height="2"/><rect x="3" y="11" width="18" height="2"/><rect x="3" y="17" width="18" height="2"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main" id="mainArea"></div>
+<div class="toasts" id="toasts"></div>
+
+<!-- ── FORM MODAL ── -->
+<div class="ov" id="ovForm">
+<div class="mform">
+  <div class="mfhdr">
+    <div class="mftitle" id="formTitle">Add New Entry</div>
+    <button class="mclose" onclick="closeForm()">×</button>
+  </div>
+  <div class="mfbody">
+    <div class="fsec">Basic Information</div>
+    <div class="frow">
+      <div class="fld"><label>Entry Type <span class="req">*</span></label>
+        <select id="fType"><option>Professor</option><option>University Program</option><option>Scholarship</option></select></div>
+      <div class="fld"><label>Country <span class="req">*</span></label>
+        <select id="fCountryF"><option>Canada</option><option>USA</option><option>Other</option></select></div>
+    </div>
+    <div class="fld full"><label>Name <span class="req">*</span></label>
+      <input id="fName" type="text" placeholder="Prof. Jeremy Clark / MS Cybersecurity / NSERC CGS-M"></div>
+    <div class="fld full"><label>University / Institution <span class="req">*</span></label>
+      <input id="fUni" type="text" placeholder="e.g. Concordia University (CIISE)"></div>
+    <div class="frow">
+      <div class="fld"><label>Department / Lab</label>
+        <input id="fDept" type="text" placeholder="e.g. CIISE / CrySP / ECE"></div>
+      <div class="fld"><label>Degree Level</label>
+        <select id="fDegree"><option>MS</option><option>MS/PhD</option><option>PhD</option><option>Fellowship</option></select></div>
+    </div>
+
+    <div class="fsec">Research & Funding</div>
+    <div class="fld full"><label>Research Areas (comma-separated)</label>
+      <input id="fAreas" type="text" placeholder="Blockchain, AI Security, Federated Learning, Cryptography">
+      <div class="hint">These appear as color-coded chips on the card</div></div>
+    <div class="frow">
+      <div class="fld"><label>Funding Status</label>
+        <select id="fFundingF">
+          <option>Fully Funded</option><option>RA Likely</option><option>TA Available</option>
+          <option>Scholarship Pool</option><option>Ask Directly</option><option>Unknown</option>
+        </select></div>
+      <div class="fld"><label>Best Fit ★ for Profile?</label>
+        <select id="fFit"><option value="no">No</option><option value="yes">Yes ★</option></select></div>
+    </div>
+
+    <div class="fsec">Status & Timeline</div>
+    <div class="frow">
+      <div class="fld"><label>Application Status <span class="req">*</span></label>
+        <select id="fStatus2">
+          <option>Not Applied</option><option>Applied</option>
+          <option>Waiting for Response</option><option>Interview</option>
+          <option>Offer Received</option><option>Rejected</option><option>Scholarship</option>
+        </select></div>
+      <div class="fld"><label>Deadline / Target Date</label>
+        <input id="fDeadline" type="date"></div>
+    </div>
+    <div class="fld full"><label>Response / Latest Update</label>
+      <input id="fResponse" type="text" placeholder="e.g. Auto-reply 12 Jun 2026 / Interview scheduled Tue 2pm"></div>
+
+    <div class="fsec">Contact Information</div>
+    <div class="frow">
+      <div class="fld"><label>Email Address</label>
+        <input id="fEmail" type="email" placeholder="professor@university.edu"></div>
+      <div class="fld"><label>Phone / Office</label>
+        <input id="fPhone" type="text" placeholder="+1-514-848-2424 ext.5381"></div>
+    </div>
+    <div class="fld full"><label>Faculty Profile / Lab Website</label>
+      <input id="fWeb" type="url" placeholder="https://lab.university.edu/~professor"></div>
+    <div class="fld full"><label>Application Portal URL</label>
+      <input id="fPortal" type="url" placeholder="https://graduate.university.edu/apply"></div>
+
+    <div class="fsec">Social & Online Handles</div>
+    <div class="sgrid">
+      <div class="fld"><label>Google Scholar</label>
+        <input id="fScholar" type="url" placeholder="https://scholar.google.com/citations?user=…"></div>
+      <div class="fld"><label>LinkedIn</label>
+        <input id="fLinkedIn" type="url" placeholder="https://linkedin.com/in/…"></div>
+      <div class="fld"><label>Twitter / X</label>
+        <input id="fTwitter" type="text" placeholder="@username or full URL"></div>
+      <div class="fld"><label>ResearchGate / ORCID</label>
+        <input id="fRG" type="url" placeholder="https://researchgate.net/profile/…"></div>
+    </div>
+
+    <div class="fsec">Notes</div>
+    <div class="fld full"><label>Research Notes / Why Interested</label>
+      <textarea id="fNote" placeholder="Why this fits your AffidBlock + Mitacs AI background. Papers to read. What to mention in email."></textarea></div>
+    <div class="fld full"><label>Email Draft / Talking Points</label>
+      <textarea id="fEmailDraft" placeholder="Paste your drafted outreach email or key bullet points here."></textarea></div>
+    <div class="frow">
+      <div class="fld"><label>Custom Field Label</label>
+        <input id="fCLabel" type="text" placeholder="e.g. Stipend Amount / Interview Date"></div>
+      <div class="fld"><label>Custom Field Value</label>
+        <input id="fCValue" type="text" placeholder="e.g. CAD $20,000/yr / 15 Jul 2026"></div>
+    </div>
+  </div>
+  <div class="mffooter">
+    <button class="btn-ghost" onclick="closeForm()">Cancel</button>
+    <button class="btn-primary" id="submitBtn" onclick="submitForm()">Save Entry</button>
+  </div>
+</div>
+</div>
+
+<!-- ── CONFIRM DELETE ── -->
+<div class="ov" id="ovConfirm">
+<div class="mconfirm">
+  <h3>Delete Entry</h3>
+  <p>This will permanently delete the entry from the database. This cannot be undone.</p>
+  <div class="mconfirm-acts">
+    <button class="btn-ghost" onclick="closeConfirm()">Cancel</button>
+    <button class="btn-danger" id="confirmDelBtn" onclick="confirmDelete()">Delete</button>
+  </div>
+</div>
+</div>
+
+<!-- ── DETAIL ── -->
+<div class="ov" id="ovDetail">
+<div class="mdetail">
+  <div class="dthdr">
+    <div>
+      <div class="dtname" id="dtName"></div>
+      <div style="font-size:12px;color:var(--dim2);margin-top:4px;" id="dtUni"></div>
+    </div>
+    <button class="mclose" onclick="closeDetail()">×</button>
+  </div>
+  <div class="dtbody" id="dtBody"></div>
+  <div class="dtfoot" id="dtFoot"></div>
+</div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+// CONFIG — set your Vercel URL + secret here
+// ════════════════════════════════════════════
+const CONFIG = {
+  // After deploying to Vercel, paste your deployment URL here:
+  // e.g. "https://ms-tracker-xyz.vercel.app"
+  apiBase: window.location.origin,
+  // This MUST match the API_SECRET env var you set in Vercel
+  // Change this to something secret before deploying:
+  secret: localStorage.getItem('ms_tracker_secret') || ''
+};
+
+// ── STATE ──
+let entries = [];
+let editId  = null;
+let deleteId = null;
+let currentView = 'grid';
+let statFilter = '';
+
+// ── LOCK SCREEN ──
+function unlock() {
+  const val = document.getElementById('lockInput').value.trim();
+  if (!val) { document.getElementById('lockErr').textContent = 'Enter your password'; return; }
+  // Store secret for API calls
+  localStorage.setItem('ms_tracker_secret', val);
+  CONFIG.secret = val;
+  document.getElementById('lockScreen').style.display = 'none';
+  loadEntries();
+}
+
+// Check if already have a stored secret
+window.addEventListener('DOMContentLoaded', () => {
+  const stored = localStorage.getItem('ms_tracker_secret');
+  if (stored) {
+    CONFIG.secret = stored;
+    document.getElementById('lockScreen').style.display = 'none';
+    loadEntries();
+  }
+});
+
+// ── API CALLS ──
+async function api(method, path, body) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json', 'x-api-secret': CONFIG.secret }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(CONFIG.apiBase + '/api/' + path, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  return data;
+}
+
+async function loadEntries() {
+  setSyncStatus('loading', '⟳ Syncing…');
+  try {
+    entries = await api('GET', 'entries');
+    setSyncStatus('ok', '✓ Synced');
+    renderAll();
+  } catch (e) {
+    setSyncStatus('err', '✗ Offline');
+    toast('Could not reach server: ' + e.message, 'error');
+    // fallback: try localStorage cache
+    try {
+      const cached = localStorage.getItem('ms_entries_cache');
+      if (cached) { entries = JSON.parse(cached); renderAll(); toast('Showing cached data', 'info'); }
+    } catch(_) {}
+  }
+}
+
+// Cache locally after every successful load
+function cacheEntries() { try { localStorage.setItem('ms_entries_cache', JSON.stringify(entries)); } catch(_) {} }
+
+function setSyncStatus(type, text) {
+  const el = document.getElementById('syncStatus');
+  el.className = 'sync-status ' + type;
+  el.textContent = text;
+}
+
+// ── STATUS HELPERS ──
+const SC = {'Not Applied':'sp-na','Applied':'sp-ap','Waiting for Response':'sp-wr','Interview':'sp-in','Offer Received':'sp-of','Rejected':'sp-re','Scholarship':'sp-sc'};
+const FC = {'Fully Funded':'var(--gold)','RA Likely':'var(--teal)','TA Available':'var(--sage)','Scholarship Pool':'var(--coral)','Ask Directly':'var(--slate)','Unknown':'var(--dim)'};
+const DM = {};
+const DP = ['var(--teal)','var(--coral)','var(--gold)','var(--sage)','var(--lav)','var(--sky)','var(--amber)','var(--pink)'];
+let dpi = 0;
+function dc(t) { const k=t.trim().toLowerCase(); if(!DM[k]){DM[k]=DP[dpi%DP.length];dpi++;} return DM[k]; }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+
+// ── STATS STRIP ──
+document.querySelectorAll('.stat').forEach(s => {
+  s.addEventListener('click', () => {
+    const f = s.dataset.filter;
+    if (statFilter === f) { statFilter = ''; s.classList.remove('active-filter'); }
+    else {
+      document.querySelectorAll('.stat').forEach(x=>x.classList.remove('active-filter'));
+      statFilter = f;
+      s.classList.add('active-filter');
+      document.getElementById('fStatus').value = f;
+    }
+    renderAll();
+  });
+});
+
+// ── RENDER ──
+function renderAll() {
+  // update stats
+  const ids = { t:entries.length, na:0, ap:0, wr:0, iv:0, of:0, re:0, sc:0 };
+  entries.forEach(e=>{
+    if(e.status==='Not Applied') ids.na++;
+    else if(e.status==='Applied') ids.ap++;
+    else if(e.status==='Waiting for Response') ids.wr++;
+    else if(e.status==='Interview') ids.iv++;
+    else if(e.status==='Offer Received') ids.of++;
+    else if(e.status==='Rejected') ids.re++;
+    else if(e.status==='Scholarship') ids.sc++;
+  });
+  document.getElementById('st-t').textContent=ids.t;
+  document.getElementById('st-na').textContent=ids.na;
+  document.getElementById('st-ap').textContent=ids.ap;
+  document.getElementById('st-wr').textContent=ids.wr;
+  document.getElementById('st-in').textContent=ids.iv;
+  document.getElementById('st-of').textContent=ids.of;
+  document.getElementById('st-re').textContent=ids.re;
+  document.getElementById('st-sc').textContent=ids.sc;
+
+  const q  = document.getElementById('searchInp').value.toLowerCase();
+  const fc = document.getElementById('fCountry').value;
+  const fs = document.getElementById('fStatus').value || statFilter;
+  const ft = document.getElementById('fType').value;
+  const ff = document.getElementById('fFunding').value;
+
+  const res = entries.filter(e => {
+    if (fc && e.country !== fc) return false;
+    if (fs && e.status  !== fs) return false;
+    if (ft && e.type    !== ft) return false;
+    if (ff && e.funding !== ff) return false;
+    if (q) { const h=[e.name,e.uni,e.dept,e.areas,e.note,e.country,e.type].join(' ').toLowerCase(); if(!h.includes(q)) return false; }
+    return true;
+  });
+
+  const main = document.getElementById('mainArea');
+
+  if (!entries.length) {
+    main.innerHTML = `<div class="empty-state">
+      <div class="big">Your tracker is empty</div>
+      <p>Add professors, university programs, and scholarships. Your data is saved to the cloud — access it from any device.</p>
+      <button class="btn-primary" onclick="openForm()">+ Add First Entry</button>
+    </div>`; return;
+  }
+  if (!res.length) {
+    main.innerHTML = `<div class="empty-state"><div class="big">No matches</div><p>Try clearing a filter or changing your search.</p></div>`; return;
+  }
+
+  if (currentView === 'grid') {
+    main.innerHTML = '<div class="grid" id="gridEl"></div>';
+    res.forEach(e => document.getElementById('gridEl').appendChild(mkCard(e)));
+  } else {
+    main.innerHTML = `<div class="tbl-wrap"><table>
+      <thead><tr><th>Name</th><th>University</th><th>Country</th><th>Type</th><th>Funding</th><th>Status</th><th>Deadline</th><th>Note</th><th>Actions</th></tr></thead>
+      <tbody id="tblBody"></tbody></table></div>`;
+    res.forEach(e => document.getElementById('tblBody').appendChild(mkRow(e)));
+  }
+  cacheEntries();
+}
+
+function mkChips(e) {
+  return (e.areas||'').split(',').map(a=>a.trim()).filter(Boolean)
+    .map(a=>`<span class="chip"><span class="cdot" style="background:${dc(a)}"></span>${esc(a)}</span>`).join('');
+}
+
+function mkCard(e) {
+  const div = document.createElement('div');
+  div.className = 'card'; div.dataset.s = e.status;
+  div.innerHTML = `
+    <div class="card-hdr">
+      <div class="card-name">${esc(e.name)}${e.fit==='yes'?'<span class="fit-star">★</span>':''}</div>
+      <span class="spill ${SC[e.status]||'sp-na'}">${e.status}</span>
+    </div>
+    <div class="card-uni">${esc(e.uni)}${e.dept?` <span style="color:var(--dim)">/ ${esc(e.dept)}</span>`:''}
+      <span class="ctag">${e.country}</span></div>
+    ${mkChips(e)?`<div class="chips">${mkChips(e)}</div>`:''}
+    ${e.funding&&e.funding!=='Unknown'?`<div style="font-family:var(--mono);font-size:10px;color:${FC[e.funding]||'var(--dim)'}">⬤ ${esc(e.funding)}</div>`:''}
+    ${e.note?`<div class="card-note">${esc(e.note)}</div>`:''}
+    <div class="card-meta">
+      ${e.email?`<a href="mailto:${esc(e.email)}">${esc(e.email)}</a>`:''}
+      ${e.web?`<a href="${esc(e.web)}" target="_blank" rel="noopener">Profile ↗</a>`:''}
+      ${e.portal?`<a href="${esc(e.portal)}" target="_blank" rel="noopener">Apply ↗</a>`:''}
+    </div>
+    ${e.deadline||e.response?`<div class="card-meta">
+      ${e.deadline?`<span>📅 ${esc(e.deadline)}</span>`:''}
+      ${e.response?`<span style="color:var(--amber)">💬 ${esc(e.response)}</span>`:''}
+    </div>`:''}
+    <div class="card-foot">
+      <span class="card-date">${new Date(e.created||Date.now()).toLocaleDateString('en-CA')}</span>
+      <div class="card-acts">
+        <button class="ibtn" onclick="openDetail('${e.id}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View
+        </button>
+        <button class="ibtn" onclick="openForm('${e.id}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit
+        </button>
+        <button class="ibtn del" onclick="askDelete('${e.id}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      </div>
+    </div>`;
+  return div;
+}
+
+function mkRow(e) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><div class="tbl-name">${esc(e.name)}${e.fit==='yes'?'<span class="fit-star">★</span>':''}</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--dim)">${esc(e.type)}</div></td>
+    <td class="tbl-uni">${esc(e.uni)}</td>
+    <td style="font-family:var(--mono);font-size:10px;color:var(--lav)">${esc(e.country)}</td>
+    <td style="font-size:11.5px;color:var(--dim2)">${esc(e.degree||'MS')}</td>
+    <td style="font-family:var(--mono);font-size:10px;color:${FC[e.funding]||'var(--dim)'}">${esc(e.funding||'—')}</td>
+    <td><span class="spill ${SC[e.status]||'sp-na'}">${esc(e.status)}</span></td>
+    <td style="font-family:var(--mono);font-size:10px;color:var(--dim)">${esc(e.deadline||'—')}</td>
+    <td class="tbl-note">${esc(e.note||'—')}</td>
+    <td><div class="tbl-acts">
+      <button class="ibtn" onclick="openDetail('${e.id}')">View</button>
+      <button class="ibtn" onclick="openForm('${e.id}')">Edit</button>
+      <button class="ibtn del" onclick="askDelete('${e.id}')">✕</button>
+    </div></td>`;
+  return tr;
+}
+
+// ── VIEW TOGGLE ──
+function setView(v){
+  currentView=v;
+  document.getElementById('btnGrid').classList.toggle('active',v==='grid');
+  document.getElementById('btnTable').classList.toggle('active',v==='table');
+  renderAll();
+}
+
+// ── FORM ──
+function formVals(e) {
+  const set = (id,v) => { const el=document.getElementById(id); if(el) el.value=v||''; };
+  set('fType',e.type||'Professor'); set('fCountryF',e.country||'Canada');
+  set('fName',e.name); set('fUni',e.uni); set('fDept',e.dept); set('fDegree',e.degree||'MS');
+  set('fAreas',e.areas); set('fFundingF',e.funding||'Unknown'); set('fFit',e.fit||'no');
+  set('fStatus2',e.status||'Not Applied'); set('fDeadline',e.deadline); set('fResponse',e.response);
+  set('fEmail',e.email); set('fPhone',e.phone); set('fWeb',e.web); set('fPortal',e.portal);
+  set('fScholar',e.scholar); set('fLinkedIn',e.linkedin); set('fTwitter',e.twitter); set('fRG',e.rg);
+  set('fNote',e.note); set('fEmailDraft',e.emailDraft);
+  set('fCLabel',e.customLabel); set('fCValue',e.customValue);
+}
+
+function openForm(id) {
+  editId = id || null;
+  document.getElementById('formTitle').textContent = id ? 'Edit Entry' : 'Add New Entry';
+  if (id) {
+    const e = entries.find(x=>x.id===id);
+    if (e) formVals(e);
+  } else {
+    formVals({});
+  }
+  document.getElementById('ovForm').classList.add('on');
+}
+function closeForm(){ document.getElementById('ovForm').classList.remove('on'); editId=null; }
+
+async function submitForm() {
+  const g = id => document.getElementById(id).value.trim();
+  const name = g('fName'), uni = g('fUni');
+  if (!name) { toast('Name is required','error'); return; }
+  if (!uni)  { toast('University is required','error'); return; }
+
+  const obj = {
+    id: editId || uid(),
+    type:g('fType'), country:g('fCountryF'), name, uni,
+    dept:g('fDept'), degree:g('fDegree'), areas:g('fAreas'),
+    funding:g('fFundingF'), fit:g('fFit'), status:g('fStatus2'),
+    deadline:g('fDeadline'), response:g('fResponse'),
+    email:g('fEmail'), phone:g('fPhone'), web:g('fWeb'), portal:g('fPortal'),
+    scholar:g('fScholar'), linkedin:g('fLinkedIn'), twitter:g('fTwitter'), rg:g('fRG'),
+    note:g('fNote'), emailDraft:g('fEmailDraft'),
+    customLabel:g('fCLabel'), customValue:g('fCValue'),
+  };
+
+  const btn = document.getElementById('submitBtn');
+  btn.innerHTML = '<span class="spin"></span> Saving…'; btn.disabled = true;
+
+  try {
+    if (editId) {
+      const updated = await api('PUT', `entry?id=${editId}`, obj);
+      const idx = entries.findIndex(x=>x.id===editId);
+      if (idx>-1) entries[idx] = updated;
+      toast('Entry updated ✓','success');
+    } else {
+      const created = await api('POST', 'entries', obj);
+      entries.unshift(created);
+      toast('Entry added ✓','success');
+    }
+    closeForm(); renderAll();
+  } catch(e) {
+    toast('Save failed: '+e.message,'error');
+  } finally {
+    btn.innerHTML = 'Save Entry'; btn.disabled = false;
+  }
+}
+
+// ── DELETE ──
+function askDelete(id){ deleteId=id; document.getElementById('ovConfirm').classList.add('on'); }
+function closeConfirm(){ document.getElementById('ovConfirm').classList.remove('on'); deleteId=null; }
+async function confirmDelete(){
+  if(!deleteId) return;
+  const btn=document.getElementById('confirmDelBtn');
+  btn.innerHTML='<span class="spin"></span>'; btn.disabled=true;
+  try {
+    await api('DELETE',`entry?id=${deleteId}`);
+    entries=entries.filter(e=>e.id!==deleteId);
+    closeConfirm(); renderAll(); toast('Deleted','info');
+  } catch(e){ toast('Delete failed: '+e.message,'error'); }
+  finally{ btn.innerHTML='Delete'; btn.disabled=false; }
+}
+
+// ── DETAIL ──
+function openDetail(id){
+  const e=entries.find(x=>x.id===id); if(!e) return;
+  document.getElementById('dtName').innerHTML=`${esc(e.name)}${e.fit==='yes'?'<span class="fit-star"> ★</span>':''}`;
+  document.getElementById('dtUni').textContent=`${e.uni}${e.dept?' / '+e.dept:''} — ${e.country}`;
+  const areas=(e.areas||'').split(',').map(s=>s.trim()).filter(Boolean);
+  const chips=areas.map(a=>`<span class="chip"><span class="cdot" style="background:${dc(a)}"></span>${esc(a)}</span>`).join('');
+  function dr(lbl,val,link=false){
+    if(!val) return `<div class="drow"><span class="dlbl">${lbl}</span><span class="dval none">—</span></div>`;
+    const v=link?`<a href="${esc(val)}" target="_blank" rel="noopener">${esc(val)} ↗</a>`:esc(val);
+    return `<div class="drow"><span class="dlbl">${lbl}</span><span class="dval">${v}</span></div>`;
+  }
+  document.getElementById('dtBody').innerHTML=`
+    <div class="drow"><span class="dlbl">Status</span><span class="dval"><span class="spill ${SC[e.status]||'sp-na'}">${esc(e.status)}</span></span></div>
+    <div class="drow"><span class="dlbl">Type</span><span class="dval">${esc(e.type)} · ${esc(e.degree)}</span></div>
+    <div class="drow"><span class="dlbl">Funding</span><span class="dval" style="color:${FC[e.funding]||'var(--dim)'}">${esc(e.funding||'—')}</span></div>
+    ${areas.length?`<div class="drow"><span class="dlbl">Research</span><span class="dval"><div class="dchips">${chips}</div></span></div>`:''}
+    ${dr('Deadline',e.deadline)}${dr('Response',e.response)}
+    <hr style="border:none;border-top:1px solid var(--bdr)">
+    ${dr('Email',e.email)}${dr('Phone',e.phone)}
+    ${dr('Profile',e.web,true)}${dr('App Portal',e.portal,true)}
+    ${e.scholar||e.linkedin||e.twitter||e.rg?`<hr style="border:none;border-top:1px solid var(--bdr)">`:''}
+    ${dr('Scholar',e.scholar,true)}${dr('LinkedIn',e.linkedin,true)}
+    ${e.twitter?dr('Twitter/X',e.twitter,e.twitter.startsWith('http')):''}
+    ${dr('ResearchGate',e.rg,true)}
+    ${e.note?`<hr style="border:none;border-top:1px solid var(--bdr)"><div class="drow"><span class="dlbl">Notes</span><span class="dval" style="white-space:pre-wrap">${esc(e.note)}</span></div>`:''}
+    ${e.emailDraft?`<div class="drow"><span class="dlbl">Email Draft</span><span class="dval" style="white-space:pre-wrap;background:var(--bg);border:1px solid var(--bdr);border-radius:4px;padding:10px;display:block;font-size:12px;">${esc(e.emailDraft)}</span></div>`:''}
+    ${e.customLabel&&e.customValue?`<hr style="border:none;border-top:1px solid var(--bdr)"><div class="drow"><span class="dlbl">${esc(e.customLabel)}</span><span class="dval" style="white-space:pre-wrap">${esc(e.customValue)}</span></div>`:''}
+    <div style="font-family:var(--mono);font-size:9.5px;color:var(--dim);padding-top:8px;border-top:1px solid var(--bdr)">Added: ${new Date(e.created||Date.now()).toLocaleString()}</div>`;
+  document.getElementById('dtFoot').innerHTML=`
+    ${e.portal?`<a class="pbtn" href="${esc(e.portal)}" target="_blank" rel="noopener">Open Portal ↗</a>`:''}
+    <button class="btn-ghost" onclick="closeDetail();openForm('${e.id}')">Edit</button>
+    <button class="btn-primary" onclick="closeDetail()">Close</button>`;
+  document.getElementById('ovDetail').classList.add('on');
+}
+function closeDetail(){ document.getElementById('ovDetail').classList.remove('on'); }
+
+// ── ESC to close ──
+['ovForm','ovConfirm','ovDetail'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){['ovForm','ovConfirm','ovDetail'].forEach(id=>document.getElementById(id).classList.remove('on'));editId=null;deleteId=null;}
+});
+
+// ── TOAST ──
+function toast(msg,type='info'){
+  const c=document.getElementById('toasts');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;t.textContent=msg;c.appendChild(t);
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),250);},2800);
+}
+</script>
+</body>
+</html>

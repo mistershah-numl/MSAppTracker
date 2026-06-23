@@ -231,7 +231,7 @@ body {
   background: rgba(255, 255, 255, 0.03); color: #93c5fd; border: 1px solid rgba(255,255,255,0.04);
 }
 
-.card-body-note { font-size: 13px; color: #9ca3af; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 38px; }
+.card-body-note { font-size: 13px; color: #9ca3af; line-height: 1.5; display: -webkit-box;-webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 38px; }
 
 /* ── CARD PASSIVE FOOTER LINK ELEMENTS ── */
 .cv-links-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border); margin-top: auto; }
@@ -239,19 +239,19 @@ body {
 .cv-icon-row { display: flex; gap: 8px; align-items: center; }
 
 .cv-anchor-node {
-  color: #9ca3af; display: inline-flex; align-items: center; justify-content: center;
+  display: inline-flex; align-items: center; justify-content: center;
   transition: all 0.15s ease; text-decoration: none; padding: 6px; border-radius: 6px;
 }
 .cv-anchor-node:hover { transform: translateY(-1px); }
-.cv-anchor-node svg { width: 16px; height: 16px; }
+.cv-anchor-node svg { width: 16px; height: 16px; fill: currentColor; }
 
-/* Branded Accent Icon Fill Classes */
-.icon-brand-email:hover { color: #ea4335; }
-.icon-brand-web:hover { color: #60a5fa; }
-.icon-brand-portal:hover { color: #34d399; }
-.icon-brand-linkedin:hover { color: #0a66c2; }
-.icon-brand-scholar:hover { color: #4285f4; }
-.icon-brand-rg:hover { color: #00ccbb; }
+/* Branded Accent Permanent Asset Colors */
+.icon-brand-email { color: #ea4335; }
+.icon-brand-web { color: #60a5fa; }
+.icon-brand-portal { color: #34d399; }
+.icon-brand-linkedin { color: #0a66c2; }
+.icon-brand-scholar { color: #4285f4; }
+.icon-brand-rg { color: #00ccbb; }
 
 /* ── SEAMLESS HORIZONTAL CIRCULAR LINKS ROW (POPUP READ VIEW) ── */
 .modal-top-links-bar {
@@ -264,19 +264,19 @@ body {
   color: #9ca3af; text-decoration: none; transition: all 0.2s; width: 74px; text-align: center;
 }
 .modal-icon-circle {
-  width: 42px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
   display: flex; align-items: center; justify-content: center; transition: all 0.2s;
 }
-/* Branded Modal Interactive Hover Injections */
-.m-email:hover .modal-icon-circle { background: rgba(234,67,53,0.15); border-color: #ea4335; color: #ea4335; box-shadow: 0 4px 12px rgba(234,67,53,0.2); }
-.m-web:hover .modal-icon-circle { background: rgba(96,165,250,0.15); border-color: #60a5fa; color: #60a5fa; box-shadow: 0 4px 12px rgba(96,165,250,0.2); }
-.m-portal:hover .modal-icon-circle { background: rgba(52,211,153,0.15); border-color: #34d399; color: #34d399; box-shadow: 0 4px 12px rgba(52,211,153,0.2); }
-.m-linkedin:hover .modal-icon-circle { background: rgba(10,102,194,0.15); border-color: #0a66c2; color: #0a66c2; box-shadow: 0 4px 12px rgba(10,102,194,0.2); }
-.m-scholar:hover .modal-icon-circle { background: rgba(66,133,244,0.15); border-color: #4285f4; color: #4285f4; box-shadow: 0 4px 12px rgba(66,133,244,0.2); }
-.m-rg:hover .modal-icon-circle { background: rgba(0,204,187,0.15); border-color: #00ccbb; color: #00ccbb; box-shadow: 0 4px 12px rgba(0,204,187,0.2); }
 
-.modal-link-large:hover { color: #fff; }
-.modal-icon-circle svg { width: 18px; height: 18px; fill: currentColor; }
+/* Modal Colorful Injections matching respective classes */
+.m-email { color: #ea4335; } .m-email .modal-icon-circle { color: #ea4335; }
+.m-web { color: #60a5fa; } .m-web .modal-icon-circle { color: #60a5fa; }
+.m-portal { color: #34d399; } .m-portal .modal-icon-circle { color: #34d399; }
+.m-linkedin { color: #0a66c2; } .m-linkedin .modal-icon-circle { color: #0a66c2; }
+.m-scholar { color: #4285f4; } .m-scholar .modal-icon-circle { color: #4285f4; }
+.m-rg { color: #00ccbb; } .m-rg .modal-icon-circle { color: #00ccbb; }
+
+.modal-link-large:hover .modal-icon-circle { transform: translateY(-2px); background: rgba(255,255,255,0.08); }
 
 /* Map Pointer Target Button */
 .map-nav-btn {
@@ -302,7 +302,7 @@ th { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-tran
 td { padding: 16px 24px; border-bottom: 1px solid var(--border); color: #e5e7eb; vertical-align: middle; }
 tr:hover td { background: rgba(255,255,255,0.01); }
 
-/* ── MODALS & DETAILS VIEW ROW DENSITY ADJUSTMENTS ── */
+/* ── MODALS ── */
 .modal-overlay { position: fixed; inset: 0; background: rgba(3, 7, 18, 0.75); backdrop-filter: blur(12px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
 .modal-overlay.active { display: flex; }
 .modal-window { background: #0b0f19; border: 1px solid var(--border); border-radius: 24px; width: 100%; max-width: 720px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); }
@@ -322,10 +322,9 @@ tr:hover td { background: rgba(255,255,255,0.01); }
   background: var(--bg-input); color: white; border: 1px solid var(--border); border-radius: 10px; padding: 9px 13px; font-size: 13px; font-family: var(--font-sans); outline: none; transition: border 0.2s;
 }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--border-focus); }
-.form-group textarea { resize: vertical; min-height: 80px; }
+.form-group textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
 .section-divider { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-top: 6px; letter-spacing: 0.1em; }
 
-/* Density Row Padding Optimization Blocks */
 .detail-row { display: flex; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.01); align-items: center; }
 .detail-label { width: 145px; font-family: var(--font-mono); font-size: 11px; color: #52525b; text-transform: uppercase; flex-shrink: 0; font-weight: 600; }
 .detail-value { color: #f3f4f6; font-size: 13.5px; word-break: break-word; }
@@ -444,10 +443,10 @@ tr:hover td { background: rgba(255,255,255,0.01); }
   </select>
 
   <div class="view-toggle-container">
-    <button class="view-toggle-btn active" id="toggleGridBtn" title="Switch to Grid View" onclick="toggleViewPreference('grid')">
+    <button class="view-toggle-btn active" id="toggleGridBtn" title="Grid View" onclick="toggleViewPreference('grid')">
       <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
     </button>
-    <button class="view-toggle-btn" id="toggleTableBtn" title="Switch to Table View" onclick="toggleViewPreference('table')">
+    <button class="view-toggle-btn" id="toggleTableBtn" title="Table View" onclick="toggleViewPreference('table')">
       <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/><line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/></svg>
     </button>
   </div>
@@ -649,7 +648,9 @@ function unlock() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  if (CONFIG.secret) {
+  const stored = localStorage.getItem('ms_tracker_secret');
+  if (stored) {
+    CONFIG.secret = stored;
     document.getElementById('lockScreen').style.display = 'none';
     loadEntries();
   }
@@ -955,7 +956,7 @@ async function executeBulkDelete() {
   }
 }
 
-/* ── SHEET CORES ── */
+/* ── SPREADSHEET ENGINE EXCHANGES ── */
 function triggerExcelImport() { document.getElementById('excelFileInput').click(); }
 function handleExcelFile(event) {
   const targetUploadedFile = event.target.files[0];
@@ -1120,14 +1121,12 @@ function openDetail(id) {
   document.getElementById('dtName').innerHTML = `${escapeContent(element.name)} ${element.fit==='yes'?'<span style="color:var(--accent)">★</span>':''}`;
   document.getElementById('dtUni').textContent = `${element.uni} ${element.dept ? '/ '+element.dept : ''} — ${element.country}`;
 
-  // Configure map link generation interceptor context
   const mapButton = document.getElementById('dtMapBtn');
   mapButton.onclick = () => {
     const mapsQueryUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(element.uni)}`;
     window.open(mapsQueryUrl, '_blank', 'noopener');
   };
 
-  // Horizontal links loader integration core
   const linksHtml = buildModalTopLinksRow(element);
   const linksBox = document.getElementById('modalTopLinksContainer');
   if(linksHtml) {

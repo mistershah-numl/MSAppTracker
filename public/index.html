@@ -269,13 +269,14 @@ body {
 }
 .modal-link-large:hover .modal-icon-circle { transform: translateY(-2px); background: rgba(255,255,255,0.08); }
 
-/* Map Pointer Target Button */
-.map-nav-btn {
-  background: transparent; border: none; color: #9ca3af; display: inline-flex; align-items: center; justify-content: center;
-  width: 32px; height: 32px; border-radius: 8px; cursor: pointer; transition: all 0.2s; margin-right: 4px;
+/* University Mini Logo Interactive Button */
+.uni-logo-btn {
+  background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); color: var(--primary);
+  display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-sans);
+  width: 34px; height: 34px; border-radius: 50%; cursor: pointer; transition: all 0.2s; 
+  margin-right: 4px; font-weight: 700; font-size: 11px; text-transform: uppercase; text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
-.map-nav-btn:hover { color: #ef4444; background: rgba(239,68,68,0.1); }
-.map-nav-btn svg { width: 18px; height: 18px; fill: currentColor; }
+.uni-logo-btn:hover { background: var(--primary); color: #fff; box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3); transform: scale(1.05); }
 
 .cv-admin-trigger-group { display: flex; gap: 4px; margin-left: 8px; border-left: 1px solid var(--border); padding-left: 8px; }
 .cv-admin-btn {
@@ -582,9 +583,7 @@ tr:hover td { background: rgba(255,255,255,0.01); }
         <div id="dtUni" style="font-size:12px; color:#9ca3af; margin-top:4px"></div>
       </div>
       <div class="modal-header-actions">
-        <button id="dtMapBtn" class="map-nav-btn" title="Locate University Campus on Google Maps">
-          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-        </button>
+        <button id="dtMapBtn" class="uni-logo-btn" title="Locate University Campus on Google Maps">UN</button>
         <button class="modal-close" onclick="closeDetail()">×</button>
       </div>
     </div>
@@ -654,7 +653,7 @@ async function apiCall(method, route, data) {
     headers: { 'Content-Type': 'application/json', 'x-api-secret': CONFIG.secret }
   };
   if(data) settings.body = JSON.stringify(data);
-  const response = await fetch(`${CONFIG.apiBase}/api/${route}`, settings);
+  const response = await fetch(CONFIG.apiBase + '/api/' + route, settings);
   const feedback = await response.json();
   if(!response.ok) throw new Error(feedback.error || `Error: ${response.status}`);
   return feedback;
@@ -1000,7 +999,7 @@ function handleExcelFile(event) {
 function exportToExcel() {
   if(!entries.length) { triggerToast('No functional lines to deploy.', 'error'); return; }
   const outputRows = entries.map(x => ({
-    'Name': x.name, 'University': x.uni, 'Type': x.type, 'Country': x.country, 'Department': x.dept || '', 'Degree Framework': x.degree, 'Research Areas': x.areas || '', 'Funding Status': x.funding, 'Priority Target': x.fit === 'yes' ? 'Yes' : 'No', 'Status': x.status, 'Deadline': x.deadline || '', 'Response Updates': x.response || '', 'Email Address': x.email || '', 'Phone': x.phone || '', 'Profile URL': x.web || '', 'Portal URL': x.portal || '', 'Google Scholar URL': x.scholar || '', 'LinkedIn URL': x.linkedin || '', 'X / Twitter Handle': x.twitter || '', 'ResearchGate URL': x.rg || '', 'Notes': x.note || '', 'Email Outreach Draft': x.emailDraft || '', 'Custom Field Label': x.customLabel || '', 'Custom Field Value': x.customValue || ''
+    'Name': x.name, 'University': x.uni, 'Type': x.type, 'Country': x.country, 'Department': x.dept || '', 'Degree Framework': x.degree, 'Research Areas': x.areas || '', 'Funding Status': x.funding, 'Priority Target': x.fit === 'yes' ? 'Yes' : 'No', 'Status': x.status, 'Deadline': x.deadline || '', 'Response Updates': x.response || '', 'Email Address': x.email || '', 'Phone': x.phone || '', 'Profile URL': x.web || '', 'Portal URL': x.portal || '', 'Google Scholar URL': x.scholar || '', 'LinkedIn URL': x.linkedin || '', 'X / Twitter Handle': x.twitter || '', 'ResearchGate URL': x.rg || '', 'Notes': x.note || '', 'Email Outreach Draft': x.emailDraft || '', 'Custom Field Label': x.customField Label || '', 'Custom Field Value': x.customValue || ''
   }));
   const sheetObject = XLSX.utils.json_to_sheet(outputRows);
   const workbookObject = XLSX.utils.book_new();
@@ -1112,9 +1111,12 @@ function openDetail(id) {
   document.getElementById('dtName').innerHTML = `${escapeContent(element.name)} ${element.fit==='yes'?'<span style="color:var(--accent)">★</span>':''}`;
   document.getElementById('dtUni').textContent = `${element.uni} ${element.dept ? '/ '+element.dept : ''} — ${element.country}`;
 
+  // Dynamically set first two characters of University Name inside the circular logo link trigger element
   const mapButton = document.getElementById('dtMapBtn');
+  const universityInitials = element.uni ? element.uni.replace(/university of/ii, '').trim().substring(0, 2).toUpperCase() : 'UN';
+  mapButton.textContent = universityInitials;
   mapButton.onclick = () => {
-    const mapsQueryUrl = `https://maps.google.com/?q=${encodeURIComponent(element.uni)}`;
+    const mapsQueryUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(element.uni)}`;
     window.open(mapsQueryUrl, '_blank', 'noopener');
   };
 

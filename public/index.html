@@ -231,7 +231,7 @@ body {
   background: rgba(255, 255, 255, 0.03); color: #93c5fd; border: 1px solid rgba(255,255,255,0.04);
 }
 
-.card-body-note { font-size: 13px; color: #9ca3af; line-height: 1.5; display: -webkit-box;-webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 38px; }
+.card-body-note { font-size: 13px; color: #9ca3af; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 38px; }
 
 /* ── CARD PASSIVE FOOTER LINK ELEMENTS ── */
 .cv-links-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border); margin-top: auto; }
@@ -243,17 +243,17 @@ body {
   transition: all 0.15s ease; text-decoration: none; padding: 6px; border-radius: 6px;
 }
 .cv-anchor-node:hover { transform: translateY(-1px); }
-.cv-anchor-node svg { width: 16px; height: 16px; fill: currentColor; }
+.cv-anchor-node svg, .modal-icon-circle svg { width: 16px; height: 16px; fill: currentColor; }
 
-/* Branded Accent Permanent Asset Colors */
-.icon-brand-email { color: #ea4335; }
-.icon-brand-web { color: #60a5fa; }
-.icon-brand-portal { color: #34d399; }
-.icon-brand-linkedin { color: #0a66c2; }
-.icon-brand-scholar { color: #4285f4; }
-.icon-brand-rg { color: #00ccbb; }
+/* Permanent Branded Colors */
+.icon-brand-email, .m-email { color: #ea4335; }
+.icon-brand-web, .m-web { color: #60a5fa; }
+.icon-brand-portal, .m-portal { color: #34d399; }
+.icon-brand-linkedin, .m-linkedin { color: #0a66c2; }
+.icon-brand-scholar, .m-scholar { color: #4285f4; }
+.icon-brand-rg, .m-rg { color: #00ccbb; }
 
-/* ── SEAMLESS HORIZONTAL CIRCULAR LINKS ROW (POPUP READ VIEW) ── */
+/* ── HORIZONTAL LINK NODES (OPEN MODAL POPUP VIEW) ── */
 .modal-top-links-bar {
   display: flex; justify-content: flex-start; align-items: center;
   padding: 10px 0 16px; margin: 0 24px; border-bottom: 1px solid var(--border);
@@ -261,21 +261,12 @@ body {
 }
 .modal-link-large {
   display: inline-flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; font-weight: 600;
-  color: #9ca3af; text-decoration: none; transition: all 0.2s; width: 74px; text-align: center;
+  text-decoration: none; transition: all 0.2s; width: 74px; text-align: center;
 }
 .modal-icon-circle {
   width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
   display: flex; align-items: center; justify-content: center; transition: all 0.2s;
 }
-
-/* Modal Colorful Injections matching respective classes */
-.m-email { color: #ea4335; } .m-email .modal-icon-circle { color: #ea4335; }
-.m-web { color: #60a5fa; } .m-web .modal-icon-circle { color: #60a5fa; }
-.m-portal { color: #34d399; } .m-portal .modal-icon-circle { color: #34d399; }
-.m-linkedin { color: #0a66c2; } .m-linkedin .modal-icon-circle { color: #0a66c2; }
-.m-scholar { color: #4285f4; } .m-scholar .modal-icon-circle { color: #4285f4; }
-.m-rg { color: #00ccbb; } .m-rg .modal-icon-circle { color: #00ccbb; }
-
 .modal-link-large:hover .modal-icon-circle { transform: translateY(-2px); background: rgba(255,255,255,0.08); }
 
 /* Map Pointer Target Button */
@@ -952,11 +943,11 @@ async function executeBulkDelete() {
     selectedIds.clear();
     loadEntries();
   } catch(e) {
-    triggerToast(`Sequence failed: ${e.message}`, 'error');
+    triggerToast('Sequence failed: ' + e.message, 'error');
   }
 }
 
-/* ── SPREADSHEET ENGINE EXCHANGES ── */
+/* ── SHEET CORES ── */
 function triggerExcelImport() { document.getElementById('excelFileInput').click(); }
 function handleExcelFile(event) {
   const targetUploadedFile = event.target.files[0];
@@ -1000,7 +991,7 @@ function handleExcelFile(event) {
       await apiCall('POST', 'entries', formattedPayloads);
       triggerToast('Spreadsheet entries saved into database successfully.', 'success');
       loadEntries();
-    } catch(err) { triggerToast(`Validation error: ${err.message}`, 'error'); }
+    } catch(err) { triggerToast('Validation error: ' + err.message, 'error'); }
   };
   fileReader.readAsArrayBuffer(targetUploadedFile);
   event.target.value = ''; 
@@ -1074,7 +1065,7 @@ async function submitForm() {
       triggerToast('New entry recorded successfully.', 'success');
     }
     closeForm(); loadEntries();
-  } catch(e) { triggerToast(`Database write dropped: ${e.message}`, 'error'); }
+  } catch(e) { triggerToast('Database write dropped: ' + e.message, 'error'); }
   finally { cBtn.disabled = false; cBtn.textContent = 'Save Entry'; }
 }
 
@@ -1088,11 +1079,11 @@ async function confirmDelete() {
     await apiCall('DELETE', `entry?id=${deleteId}`);
     triggerToast('Entry deleted successfully.', 'success');
     closeConfirm(); closeDetail(); loadEntries();
-  } catch(e) { triggerToast(`Operation failed: ${e.message}`, 'error'); }
+  } catch(e) { triggerToast('Operation failed: ' + e.message, 'error'); }
   finally { executionTargetBtn.disabled = false; }
 }
 
-/* BRANDED COLOR-GRADIENT CIRCULAR LINKS ENGINE */
+/* BRANDED COLOR LINKS NAVIGATION ENGINE */
 function buildModalTopLinksRow(item) {
   let html = '';
   const mapLargeLink = (key, url, text, brandClass) => {
@@ -1123,7 +1114,7 @@ function openDetail(id) {
 
   const mapButton = document.getElementById('dtMapBtn');
   mapButton.onclick = () => {
-    const mapsQueryUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(element.uni)}`;
+    const mapsQueryUrl = `https://maps.google.com/?q=${encodeURIComponent(element.uni)}`;
     window.open(mapsQueryUrl, '_blank', 'noopener');
   };
 

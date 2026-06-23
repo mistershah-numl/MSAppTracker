@@ -38,7 +38,7 @@ body {
   min-height: 100vh;
 }
 
-/* ── ACCESS LOCK ── */
+/* ── LOCK SCREEN ── */
 #lockScreen {
   position: fixed; inset: 0; background: #070a13; z-index: 9999;
   display: flex; align-items: center; justify-content: center;
@@ -68,7 +68,7 @@ body {
 .lock-card button:hover { background: var(--primary-hover); }
 .lock-err { color: var(--danger); font-size: 12px; margin-top: 12px; min-height: 18px; }
 
-/* ── HEADER NAVIGATION ── */
+/* ── HEADER ── */
 .dashboard-header {
   backdrop-filter: blur(24px); background: rgba(3, 7, 18, 0.6);
   border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000;
@@ -92,7 +92,7 @@ body {
 .status-badge.loading { color: var(--accent); border-color: rgba(245,158,11,0.2); }
 .status-badge.err { color: var(--danger); border-color: rgba(239,68,68,0.2); }
 
-/* ── UTILITY BUTTONS ── */
+/* ── BUTTONS ── */
 .btn {
   font-family: var(--font-sans); font-size: 13px; font-weight: 600; padding: 8px 16px;
   border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center;
@@ -105,7 +105,16 @@ body {
 .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border-color: rgba(239,68,68,0.15); }
 .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
 
-/* ── ANALYTICS HERO PANEL ── */
+/* ── VIEW MODE TOGGLE ICONS ── */
+.view-toggle-container { display: inline-flex; background: var(--bg-input); padding: 4px; border-radius: 10px; border: 1px solid var(--border); gap: 4px; }
+.view-toggle-btn {
+  background: transparent; border: none; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+  border-radius: 6px; color: var(--text-muted); cursor: pointer; transition: all 0.2s;
+}
+.view-toggle-btn.active { background: var(--primary); color: #fff; }
+.view-toggle-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+/* ── STATS PANEL ── */
 .hero-analytics { padding: 32px 32px 16px; display: grid; grid-template-columns: 2fr 3fr; gap: 24px; }
 @media(max-width:1024px) { .hero-analytics { grid-template-columns: 1fr; } }
 
@@ -145,7 +154,7 @@ body {
 .stat-box .count { font-size: 24px; font-weight: 800; line-height: 1.2; letter-spacing: -0.03em; }
 .stat-box .label { font-size: 12px; color: #9ca3af; font-weight: 500; margin-top: 4px; }
 
-/* ── CONTROLS TOOLBAR ── */
+/* ── TOOLBAR ── */
 .filter-bar { padding: 0 32px 24px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
 .search-container { position: relative; flex: 1; min-width: 260px; }
 .search-container input {
@@ -169,11 +178,11 @@ body {
 .bulk-info { font-weight: 600; color: #60a5fa; font-size: 13px; }
 .bulk-controls { display: flex; gap: 12px; align-items: center; }
 
-/* ── GRID PRESENTATION MODULES ── */
+/* ── APPLICATIONS GRID LAYOUT ── */
 .app-container { padding: 0 32px 64px; }
 .cards-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
 
-/* ── CLEAN RESUME/CV STYLE CARD DESIGN ── */
+/* ── CARD DESIGN ── */
 .modern-card {
   background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 22px; display: flex; flex-direction: column; gap: 14px; position: relative;
@@ -224,32 +233,33 @@ body {
 
 .card-body-note { font-size: 13px; color: #9ca3af; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 38px; }
 
-/* ── PRECISE CV FOOTER LINK BAR ── */
-.cv-links-footer {
-  display: flex; justify-content: space-between; align-items: center;
-  padding-top: 12px; border-top: 1px solid var(--border); margin-top: auto;
-}
+/* ── REUSABLE MINI ICON VECTORS ── */
+.cv-links-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border); margin-top: auto; }
 .cv-telemetry { font-size: 11px; color: #52525b; font-family: var(--font-mono); }
 .cv-icon-row { display: flex; gap: 8px; align-items: center; }
 
-/* Mini CV Hyperlink Vectors */
 .cv-anchor-node {
   color: #9ca3af; display: inline-flex; align-items: center; justify-content: center;
-  transition: all 0.15s ease; text-decoration: none; padding: 4px; border-radius: 6px;
+  transition: all 0.15s ease; text-decoration: none; padding: 6px; border-radius: 6px;
 }
 .cv-anchor-node:hover { color: #fff; background: rgba(255,255,255,0.05); transform: translateY(-1px); }
-.cv-anchor-node svg { width: 15px; height: 15px; fill: currentColor; }
+.cv-anchor-node svg { width: 16px; height: 16px; fill: currentColor; }
 
-/* Administrative Inner Actions Group */
-.cv-admin-trigger-group { display: flex; gap: 4px; margin-left: 8px; border-left: 1px solid var(--border); padding-left: 8px; }
-.cv-admin-btn {
-  background: transparent; border: none; color: #4b5563; font-size: 13px;
-  cursor: pointer; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px;
+/* Dedicated Modal Layout Links Bar */
+.modal-top-links-bar {
+  display: flex; gap: 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 18px; margin-bottom: 12px; align-items: center; flex-wrap: wrap;
 }
-.cv-admin-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
-.cv-admin-btn.del:hover { color: var(--danger); background: rgba(239,68,68,0.1); }
+.modal-top-links-bar label { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-right: 4px; }
+.modal-link-large {
+  display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;
+  color: #fff; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  padding: 8px 14px; border-radius: 8px; text-decoration: none; transition: all 0.2s;
+}
+.modal-link-large:hover { background: var(--primary); border-color: var(--primary); transform: translateY(-1px); }
+.modal-link-large svg { width: 16px; height: 16px; fill: currentColor; }
 
-/* ── DETAILED COMPACT TABLE VIEW CONTAINER ── */
+/* ── COMPACT TABLE VIEW ── */
 .table-view-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--card-shadow); backdrop-filter: blur(12px); }
 .table-wrapper { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
@@ -257,7 +267,7 @@ th { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-tran
 td { padding: 16px 24px; border-bottom: 1px solid var(--border); color: #e5e7eb; vertical-align: middle; }
 tr:hover td { background: rgba(255,255,255,0.01); }
 
-/* ── MODALS (GLASS CONFIG) ── */
+/* ── MODALS ── */
 .modal-overlay { position: fixed; inset: 0; background: rgba(3, 7, 18, 0.75); backdrop-filter: blur(12px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
 .modal-overlay.active { display: flex; }
 .modal-window { background: #0b0f19; border: 1px solid var(--border); border-radius: 24px; width: 100%; max-width: 720px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); }
@@ -278,14 +288,12 @@ tr:hover td { background: rgba(255,255,255,0.01); }
 .form-group textarea { resize: vertical; min-height: 80px; }
 .section-divider { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-top: 8px; letter-spacing: 0.1em; }
 
-/* ── READONLY CONTEXT OVERLAYS ── */
+/* ── DETAIL ROWS ── */
 .detail-row { display: flex; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
 .detail-label { width: 140px; font-family: var(--font-mono); font-size: 11px; color: #6b7280; text-transform: uppercase; flex-shrink: 0; }
 .detail-value { color: #f3f4f6; font-size: 14px; word-break: break-word; }
-.detail-value a { color: var(--primary); text-decoration: none; }
-.detail-value a:hover { text-decoration: underline; }
 
-/* ── LIVE TOASTS ── */
+/* ── TOASTS ── */
 .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
 .toast-msg { background: #111827; border: 1px solid var(--border); border-radius: 12px; padding: 14px 24px; font-size: 13px; color: #fff; min-width: 280px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4); animation: slideIn 0.2s ease forwards; border-left: 4px solid var(--primary); }
 .toast-msg.success { border-left-color: var(--success); }
@@ -319,7 +327,7 @@ tr:hover td { background: rgba(255,255,255,0.01); }
   <div class="nav-actions">
     <span class="status-badge loading" id="syncStatus">Connecting Infrastructure...</span>
     <button class="btn btn-secondary" onclick="loadEntries()">Refresh Matrix</button>
-    <button class="btn btn-primary" onclick="openForm()">+ Add Node Manually</button>
+    <button class="btn btn-primary" onclick="openForm()">+ Add Entry</button>
   </div>
 </div>
 
@@ -369,7 +377,7 @@ tr:hover td { background: rgba(255,255,255,0.01); }
     </div>
     <div class="stat-box s-total" style="background:rgba(255,255,255,0.01)" data-filter="Not Applied">
       <div class="count" id="st-na">0</div>
-      <div class="label">Drafts</div>
+      <div class="label">Not Applied</div>
     </div>
   </div>
 </div>
@@ -377,7 +385,7 @@ tr:hover td { background: rgba(255,255,255,0.01); }
 <div class="filter-bar">
   <div class="search-container">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input id="searchInp" type="text" placeholder="Filter vectors via naming, parameters, keywords..." oninput="renderAll()">
+    <input id="searchInp" type="text" placeholder="Search profiles, keywords..." oninput="renderAll()">
   </div>
 
   <select class="select-input" id="fCountry" onchange="renderAll()">
@@ -389,18 +397,23 @@ tr:hover td { background: rgba(255,255,255,0.01); }
     <option>Professor</option><option>University Program</option><option>Scholarship</option>
   </select>
   <select class="select-input" id="fFunding" onchange="renderAll()">
-    <option value="">All Fiscal Contexts</option>
+    <option value="">All Funding Statuses</option>
     <option>Fully Funded</option><option>RA Likely</option><option>TA Available</option><option>Scholarship Pool</option><option>Ask Directly</option>
   </select>
   <select class="select-input" id="sortField" onchange="renderAll()">
     <option value="created">Sort: Date Logged</option>
-    <option value="deadline">Sort: Target Deadline</option>
+    <option value="deadline">Sort: Deadline</option>
     <option value="name">Sort: Alphabetical</option>
   </select>
-  <select class="select-input" id="viewMode" onchange="toggleViewMode(this.value)">
-    <option value="grid">View Grid Cards</option>
-    <option value="table">View Compact Table</option>
-  </select>
+
+  <div class="view-toggle-container">
+    <button class="view-toggle-btn active" id="toggleGridBtn" title="Switch to Grid View" onclick="toggleViewPreference('grid')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    </button>
+    <button class="view-toggle-btn" id="toggleTableBtn" title="Switch to Table View" onclick="toggleViewPreference('table')">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/><line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/></svg>
+    </button>
+  </div>
 
   <button class="btn btn-secondary" onclick="triggerExcelImport()">⚡ Import Sheet</button>
   <button class="btn btn-secondary" onclick="exportToExcel()">⤓ Export Excel</button>
@@ -409,14 +422,14 @@ tr:hover td { background: rgba(255,255,255,0.01); }
 </div>
 
 <div id="bulkBar">
-  <div class="bulk-info" id="bulkCountText">0 items flagged for transaction</div>
+  <div class="bulk-info" id="bulkCountText">0 items selected</div>
   <div class="bulk-controls">
     <select class="select-input" id="bulkStatusAction" onchange="executeBulkStatusUpdate(this.value)">
-      <option value="">Batch Status Adjust...</option>
+      <option value="">Batch Status Update...</option>
       <option>Not Applied</option><option>Applied</option><option>Waiting for Response</option><option>Interview</option><option>Offer Received</option><option>Rejected</option><option>Scholarship</option>
     </select>
-    <button class="btn btn-danger" onclick="executeBulkDelete()">Purge Selection</button>
-    <button class="btn btn-secondary" onclick="clearSelectionSet()">Clear Selection</button>
+    <button class="btn btn-danger" onclick="executeBulkDelete()">Delete Selection</button>
+    <button class="btn btn-secondary" onclick="clearSelectionSet()">Clear</button>
   </div>
 </div>
 
@@ -429,107 +442,107 @@ tr:hover td { background: rgba(255,255,255,0.01); }
 <div class="modal-overlay" id="ovForm">
   <div class="modal-window">
     <div class="modal-header">
-      <h2 id="formTitle">Instantiate New Node</h2>
+      <h2 id="formTitle">Add New Entry</h2>
       <button class="modal-close" onclick="closeForm()">×</button>
     </div>
     <div class="modal-body">
-      <div class="section-divider">Primary Dimensions</div>
+      <div class="section-divider">Basic Information</div>
       <div class="form-grid">
         <div class="form-group">
-          <label>Vector Classification *</label>
+          <label>Type *</label>
           <select id="fTypeField"><option>Professor</option><option>University Program</option><option>Scholarship</option></select>
         </div>
         <div class="form-group">
-          <label>Regional Jurisdiction *</label>
+          <label>Country *</label>
           <select id="fCountryField"><option>Canada</option><option>USA</option><option>Other</option></select>
         </div>
         <div class="form-group colspan-2">
-          <label>Identifier Naming Core *</label>
+          <label>Name *</label>
           <input id="fName" type="text" placeholder="e.g., Prof. Jeremy Clark / MS Cybersecurity">
         </div>
         <div class="form-group colspan-2">
-          <label>Target Institution Matrix *</label>
+          <label>University / Institution *</label>
           <input id="fUni" type="text" placeholder="e.g., Concordia University (CIISE)">
         </div>
         <div class="form-group">
-          <label>Department / Core Laboratory</label>
+          <label>Department / Lab</label>
           <input id="fDept" type="text" placeholder="e.g., CIISE / CrySP Lab">
         </div>
         <div class="form-group">
-          <label>Degree Framework</label>
+          <label>Degree</label>
           <select id="fDegree"><option>MS</option><option>MS/PhD</option><option>PhD</option><option>Fellowship</option></select>
         </div>
       </div>
 
-      <div class="section-divider">Fulfillment Parameters</div>
+      <div class="section-divider">Research & Funding</div>
       <div class="form-grid">
         <div class="form-group colspan-2">
-          <label>Research Vectors (Comma Separated Arrays)</label>
+          <label>Research Areas (Comma Separated)</label>
           <input id="fAreas" type="text" placeholder="Blockchain, AI Security, Cryptography">
         </div>
         <div class="form-group">
-          <label>Fiscal Allocation Status</label>
+          <label>Funding Status</label>
           <select id="fFundingField">
             <option>Fully Funded</option><option>RA Likely</option><option>TA Available</option><option>Scholarship Pool</option><option>Ask Directly</option><option>Unknown</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Strategic Priority Mapping</label>
+          <label>Priority Mapping</label>
           <select id="fFit"><option value="no">Standard Pipeline</option><option value="yes">High Priority Target ★</option></select>
         </div>
       </div>
 
-      <div class="section-divider">Pipeline State & Timelines</div>
+      <div class="section-divider">Status & Timeline</div>
       <div class="form-grid">
         <div class="form-group">
-          <label>Pipeline Stage Placement</label>
+          <label>Application Status</label>
           <select id="fStatus2">
             <option>Not Applied</option><option>Applied</option><option>Waiting for Response</option><option>Interview</option><option>Offer Received</option><option>Rejected</option><option>Scholarship</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Target Submission Cutoff</label>
+          <label>Target Deadline</label>
           <input id="fDeadline" type="date">
         </div>
         <div class="form-group colspan-2">
-          <label>Pipeline Response Registry</label>
+          <label>Latest Response / Updates</label>
           <input id="fResponse" type="text" placeholder="e.g., Interview scheduled for July 15">
         </div>
       </div>
 
-      <div class="section-divider">Telemetry Channels</div>
+      <div class="section-divider">Links & Contact Channels</div>
       <div class="form-grid">
-        <div class="form-group"><label>Digital Mail Relay</label><input id="fEmail" type="email" placeholder="prof@uni.edu"></div>
-        <div class="form-group"><label>Telephonic Link</label><input id="fPhone" type="text" placeholder="Office extension digits"></div>
-        <div class="form-group colspan-2"><label>Faculty Directory Index URL</label><input id="fWeb" type="url" placeholder="https://..."></div>
-        <div class="form-group colspan-2"><label>Application Processing Hub URL</label><input id="fPortal" type="url" placeholder="https://..."></div>
+        <div class="form-group"><label>Email Address</label><input id="fEmail" type="email" placeholder="prof@uni.edu"></div>
+        <div class="form-group"><label>Phone Number</label><input id="fPhone" type="text" placeholder="Office extension digits"></div>
+        <div class="form-group colspan-2"><label>Profile Web URL</label><input id="fWeb" type="url" placeholder="https://..."></div>
+        <div class="form-group colspan-2"><label>Application Portal URL</label><input id="fPortal" type="url" placeholder="https://..."></div>
       </div>
 
-      <div class="section-divider">Extended Data Profiles</div>
+      <div class="section-divider">Online Profiles</div>
       <div class="form-grid">
-        <div class="form-group"><label>Google Scholar Identity</label><input id="fScholar" type="url"></div>
-        <div class="form-group"><label>LinkedIn Vector Link</label><input id="fLinkedIn" type="url"></div>
-        <div class="form-group"><label>X Handle Identifier</label><input id="fTwitter" type="text"></div>
-        <div class="form-group"><label>ResearchGate Index</label><input id="fRG" type="url"></div>
+        <div class="form-group"><label>Google Scholar URL</label><input id="fScholar" type="url"></div>
+        <div class="form-group"><label>LinkedIn URL</label><input id="fLinkedIn" type="url"></div>
+        <div class="form-group"><label>X / Twitter Handle</label><input id="fTwitter" type="text"></div>
+        <div class="form-group"><label>ResearchGate URL</label><input id="fRG" type="url"></div>
       </div>
 
-      <div class="section-divider">Unstructured Storage Blocks</div>
+      <div class="section-divider">Notes & Communications</div>
       <div class="form-group">
-        <label>Strategic Analysis Notes</label>
-        <textarea id="fNote" placeholder="Synthesize profile alignment parameters here..."></textarea>
+        <label>Notes</label>
+        <textarea id="fNote" placeholder="Write profile notes here..."></textarea>
       </div>
       <div class="form-group">
-        <label>Communication Payload Template / Draft</label>
-        <textarea id="fEmailDraft" placeholder="Write or stage transmission payloads..."></textarea>
+        <label>Email Outreach Draft</label>
+        <textarea id="fEmailDraft" placeholder="Stage outreach message text payloads..."></textarea>
       </div>
       <div class="form-grid">
-        <div class="form-group"><label>Variable Label Attribute</label><input id="fCLabel" type="text"></div>
-        <div class="form-group"><label>Variable Key Value</label><input id="fCValue" type="text"></div>
+        <div class="form-group"><label>Custom Label</label><input id="fCLabel" type="text"></div>
+        <div class="form-group"><label>Custom Value</label><input id="fCValue" type="text"></div>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="closeForm()">Abort</button>
-      <button class="btn btn-primary" id="submitBtn" onclick="submitForm()">Commit Entry</button>
+      <button class="btn btn-secondary" onclick="closeForm()">Cancel</button>
+      <button class="btn btn-primary" id="submitBtn" onclick="submitForm()">Save Entry</button>
     </div>
   </div>
 </div>
@@ -543,18 +556,19 @@ tr:hover td { background: rgba(255,255,255,0.01); }
       </div>
       <button class="modal-close" onclick="closeDetail()">×</button>
     </div>
+    <div id="modalTopLinksContainer" class="modal-body" style="padding-bottom: 0px; display:none;"></div>
     <div class="modal-body" id="dtBody"></div>
     <div class="modal-footer" id="dtFoot"></div>
   </div>
 </div>
 
 <div class="modal-overlay" id="ovConfirm">
-  <div class="modal-window" style="max-width: 400px">
-    <div class="modal-header"><h2>Destructive Confirmation</h2></div>
-    <div class="modal-body"><p style="color:#9ca3af">This routine permanently excises the designated vector index from the database. Reversal is functionally impossible.</p></div>
+  <div class="modal-window" style="max-width: 420px">
+    <div class="modal-header"><h2>Delete Entry</h2></div>
+    <div class="modal-body"><p style="color:#9ca3af; font-size:14px; line-height:1.5;">Are you sure you want to delete this entry? This action cannot be undone.</p></div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeConfirm()">Cancel</button>
-      <button class="btn btn-danger" id="confirmDelBtn" onclick="confirmDelete()">Execute Purge</button>
+      <button class="btn btn-danger" id="confirmDelBtn" onclick="confirmDelete()">Delete</button>
     </div>
   </div>
 </div>
@@ -571,6 +585,16 @@ let editId = null;
 let deleteId = null;
 let activeStatFilter = '';
 let viewPreference = 'grid';
+
+// Reusable SVG Paths Object Map
+const SVG_ICONS = {
+  email: `<svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`,
+  web: `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>`,
+  portal: `<svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>`,
+  linkedin: `<svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>`,
+  scholar: `<svg viewBox="0 0 24 24"><path d="M12 2L1 9l11 7 9-5.73V17h2V9L12 2zm0 11.5L5.22 9 12 5.5 18.78 9 12 13.5zM12 16c-2.21 0-4 1.79-4 4h8c0-2.21-1.79-4-4-4z"/></svg>`,
+  rg: `<svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7.61 13h-1.83v-2.04H8.43V16H6.61V8h3.11c1.83 0 2.89.97 2.89 2.66 0 1.25-.66 2.06-1.72 2.36L12.56 16h-1.17zm.33-5.34c0-.93-.57-1.42-1.5-1.42H8.43v2.85h1.36c.93 0 1.5-.49 1.5-1.43z"/></svg>`
+};
 
 function unlock() {
   const val = document.getElementById('lockInput').value.trim();
@@ -597,19 +621,19 @@ async function apiCall(method, route, data) {
   if(data) settings.body = JSON.stringify(data);
   const response = await fetch(`${CONFIG.apiBase}/api/${route}`, settings);
   const feedback = await response.json();
-  if(!response.ok) throw new Error(feedback.error || `Error state code: ${response.status}`);
+  if(!response.ok) throw new Error(feedback.error || `Error: ${response.status}`);
   return feedback;
 }
 
 async function loadEntries() {
-  updateSyncMarkup('loading', 'Syncing Cluster Array...');
+  updateSyncMarkup('loading', 'Syncing Matrix Arrays...');
   try {
     entries = await apiCall('GET', 'entries');
-    updateSyncMarkup('ok', 'Nodes Operational');
+    updateSyncMarkup('ok', 'Nodes Online');
     renderAll();
   } catch(e) {
-    updateSyncMarkup('err', 'Array Localised');
-    triggerToast('Remote sync interrupted. Serving local snapshot.', 'error');
+    updateSyncMarkup('err', 'Serving Stored Snapshot');
+    triggerToast('Network sync dropped. Using offline cache.', 'error');
     const locallyStored = localStorage.getItem('ms_entries_cache');
     if(locallyStored) { entries = JSON.parse(locallyStored); renderAll(); }
   }
@@ -663,7 +687,7 @@ function renderAll() {
   const evaluationRatio = metrics.total > 0 ? Math.round((evaluatedSubmissions / metrics.total) * 100) : 0;
   document.getElementById('metricsPercentage').textContent = `${evaluationRatio}%`;
   document.getElementById('metricsBar').style.width = `${evaluationRatio}%`;
-  document.getElementById('metricsRatio').textContent = `${evaluatedSubmissions} transmitted / ${metrics.total} scoped profiles`;
+  document.getElementById('metricsRatio').textContent = `${evaluatedSubmissions} completed / ${metrics.total} tracked lines`;
 
   const query = document.getElementById('searchInp').value.toLowerCase();
   const filterCountry = document.getElementById('fCountry').value;
@@ -701,7 +725,7 @@ function renderAll() {
 function renderViewPresentation(dataset) {
   const targetLayoutContainer = document.getElementById('primaryViewport');
   if(!dataset.length) {
-    targetLayoutContainer.innerHTML = `<div style="text-align:center; padding:80px; color:#6b7280; border:1px dashed var(--border); border-radius:16px"><h3>No active context matched parameters</h3><p style="font-size:12px; margin-top:4px">Alter search patterns or load defaults</p></div>`;
+    targetLayoutContainer.innerHTML = `<div style="text-align:center; padding:80px; color:#6b7280; border:1px dashed var(--border); border-radius:16px"><h3>No metrics found matching criteria</h3></div>`;
     return;
   }
 
@@ -720,7 +744,7 @@ function renderViewPresentation(dataset) {
           <thead>
             <tr>
               <th style="width:40px">Sel</th>
-              <th>Identity Node</th><th>Institution</th><th>Region</th><th>Funding Matrix</th><th>Stage</th><th>Target Cutoff</th><th>Actions</th>
+              <th>Name</th><th>Institution</th><th>Country</th><th>Funding Status</th><th>Status</th><th>Deadline</th><th>Actions</th>
             </tr>
           </thead>
           <tbody id="tabularInjectTarget"></tbody>
@@ -733,54 +757,21 @@ function renderViewPresentation(dataset) {
   }
 }
 
-// ── BUILD DYNAMIC CV LINK ICON ROW ──
-function generateCvLinksRow(item) {
-  let innerIconsHtml = '';
-
-  // 1. Email vector
-  if(item.email) {
-    innerIconsHtml += `
-      <a class="cv-anchor-node" href="mailto:${item.email}" title="Transmit Direct Email Anchor" onclick="event.stopPropagation();">
-        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-      </a>`;
-  }
-  // 2. Profile Web Vector
-  if(item.web) {
-    innerIconsHtml += `
-      <a class="cv-anchor-node" href="${item.web}" target="_blank" rel="noopener" title="Open Directory Resource Index" onclick="event.stopPropagation();">
-        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-      </a>`;
-  }
-  // 3. Submissions Processing Portal Vector
-  if(item.portal) {
-    innerIconsHtml += `
-      <a class="cv-anchor-node" href="${item.portal}" target="_blank" rel="noopener" title="Launch Processing Submission Interface" onclick="event.stopPropagation();" style="color:var(--primary)">
-        <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
-      </a>`;
-  }
-  // 4. LinkedIn Node Matrix
-  if(item.linkedin) {
-    innerIconsHtml += `
-      <a class="cv-anchor-node" href="${item.linkedin}" target="_blank" rel="noopener" title="Connect LinkedIn Identity Vector" onclick="event.stopPropagation();">
-        <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
-      </a>`;
-  }
-  // 5. Google Scholar Index Matrix
-  if(item.scholar) {
-    innerIconsHtml += `
-      <a class="cv-anchor-node" href="${item.scholar}" target="_blank" rel="noopener" title="Review Google Scholar Citations" onclick="event.stopPropagation();">
-        <svg viewBox="0 0 24 24"><path d="M12 2L1 9l11 7 9-5.73V17h2V9L12 2zm0 11.5L5.22 9 12 5.5 18.78 9 12 13.5zM12 16c-2.21 0-4 1.79-4 4h8c0-2.21-1.79-4-4-4z"/></svg>
-      </a>`;
-  }
-  // 6. ResearchGate/ORCID Parameters Registry
-  if(item.rg) {
-    innerIconsHtml += `
-      <a class="cv-anchor-node" href="${item.rg}" target="_blank" rel="noopener" title="Review ResearchGate Node Registry" onclick="event.stopPropagation();">
-        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7.61 13h-1.83v-2.04H8.43V16H6.61V8h3.11c1.83 0 2.89.97 2.89 2.66 0 1.25-.66 2.06-1.72 2.36L12.56 16h-1.17zm.33-5.34c0-.93-.57-1.42-1.5-1.42H8.43v2.85h1.36c.93 0 1.5-.49 1.5-1.43z"/></svg>
-      </a>`;
-  }
-
-  return innerIconsHtml;
+function generateCvLinksRow(item, sizeClass = '') {
+  let html = '';
+  const mapIcon = (key, url, title) => {
+    if(!url) return '';
+    return `<a class="cv-anchor-node ${sizeClass}" href="${url.startsWith('http') || key==='email' ? '' : 'https://'}${url}" ${key==='email' ? '' : 'target="_blank" rel="noopener"'} title="${title}" onclick="event.stopPropagation();">${SVG_ICONS[key]}</a>`;
+  };
+  
+  if(item.email) html += mapIcon('email', `mailto:${item.email}`, 'Email Address');
+  if(item.web) html += mapIcon('web', item.web, 'Website Directory Profile');
+  if(item.portal) html += mapIcon('portal', item.portal, 'Application Link Portal');
+  if(item.linkedin) html += mapIcon('linkedin', item.linkedin, 'LinkedIn Profile Link');
+  if(item.scholar) html += mapIcon('scholar', item.scholar, 'Google Scholar Index');
+  if(item.rg) html += mapIcon('rg', item.rg, 'ResearchGate Portfolio Profile');
+  
+  return html;
 }
 
 function buildModernCardComponent(item) {
@@ -820,10 +811,10 @@ function buildModernCardComponent(item) {
       <span class="meta-badge" style="color:#34d399; background:rgba(52,211,153,0.03)">${item.degree}</span>
     </div>
     ${researchChips ? `<div class="tag-field">${researchChips}</div>` : ''}
-    <div class="card-body-note">${item.note ? escapeContent(item.note) : '<span style="color:rgba(255,255,255,0.08); font-style:italic">No descriptive logs documented</span>'}</div>
+    <div class="card-body-note">${item.note ? escapeContent(item.note) : '<span style="color:rgba(255,255,255,0.08); font-style:italic">No notes documented.</span>'}</div>
     
     <div class="cv-links-footer" onclick="event.stopPropagation();">
-      <div class="cv-telemetry">Cutoff: ${item.deadline ? item.deadline : '—'}</div>
+      <div class="cv-telemetry">Deadline: ${item.deadline ? item.deadline : '—'}</div>
       <div class="cv-icon-row">
         ${identityIconLinks}
         <div class="cv-admin-trigger-group">
@@ -859,8 +850,10 @@ function buildTableDataRow(item) {
   return row;
 }
 
-function toggleViewMode(val) {
-  viewPreference = val;
+function toggleViewPreference(mode) {
+  viewPreference = mode;
+  document.getElementById('toggleGridBtn').classList.toggle('active', mode === 'grid');
+  document.getElementById('toggleTableBtn').classList.toggle('active', mode === 'table');
   renderAll();
 }
 
@@ -879,7 +872,7 @@ function evaluateBulkBarDock() {
   const bar = document.getElementById('bulkBar');
   if(selectedIds.size > 0) {
     bar.style.display = 'flex';
-    document.getElementById('bulkCountText').textContent = `${selectedIds.size} discrete profile nodes isolated for batch execution`;
+    document.getElementById('bulkCountText').textContent = `${selectedIds.size} lines selected`;
   } else {
     bar.style.display = 'none';
   }
@@ -887,7 +880,7 @@ function evaluateBulkBarDock() {
 
 async function executeBulkStatusUpdate(statusVal) {
   if(!statusVal || selectedIds.size === 0) return;
-  updateSyncMarkup('loading', 'Writing Batch Execution Matrix...');
+  updateSyncMarkup('loading', 'Writing Batch Metrics Updates...');
   try {
     const jobs = Array.from(selectedIds).map(id => {
       const match = entries.find(x => x.id === id);
@@ -895,222 +888,150 @@ async function executeBulkStatusUpdate(statusVal) {
       return apiCall('PUT', `entry?id=${id}`, compositeObject);
     });
     await Promise.all(jobs);
-    triggerToast('Batch stage alteration executed successfully', 'success');
+    triggerToast('Batch sync completed successfully', 'success');
     selectedIds.clear();
     document.getElementById('bulkStatusAction').value = '';
     loadEntries();
   } catch(e) {
-    triggerToast(`Batch transaction dropped: ${e.message}`, 'error');
+    triggerToast(`Batch write dropped: ${e.message}`, 'error');
   }
 }
 
 async function executeBulkDelete() {
   if(selectedIds.size === 0) return;
-  if(!confirm('Authorize continuous batch destruction execution?')) return;
-  updateSyncMarkup('loading', 'Purging Isolated Clusters...');
+  if(!confirm('Are you sure you want to delete all selected items?')) return;
+  updateSyncMarkup('loading', 'Purging Records...');
   try {
     const jobs = Array.from(selectedIds).map(id => apiCall('DELETE', `entry?id=${id}`));
     await Promise.all(jobs);
-    triggerToast('Purged targeted nodes from index', 'success');
+    triggerToast('Purged targeted lines', 'success');
     selectedIds.clear();
     loadEntries();
   } catch(e) {
-    triggerToast(`Purge sequence failed: ${e.message}`, 'error');
+    triggerToast(`Sequence dropped: ${e.message}`, 'error');
   }
 }
 
-/* ── EXCEL SPREADSHEET ENGINE OPERATIONS ── */
-function triggerExcelImport() {
-  document.getElementById('excelFileInput').click();
-}
-
+/* ── SPREADSHEET ENGINE EXCHANGES ── */
+function triggerExcelImport() { document.getElementById('excelFileInput').click(); }
 function handleExcelFile(event) {
   const targetUploadedFile = event.target.files[0];
   if(!targetUploadedFile) return;
-
   const fileReader = new FileReader();
   fileReader.onload = async function(e) {
     try {
       const arrayBuffer = e.target.result;
       const loadedWorkbook = XLSX.read(arrayBuffer, { type: 'array' });
-      const internalSheetName = loadedWorkbook.SheetNames[0];
-      const dataArray = XLSX.utils.sheet_to_json(loadedWorkbook.Sheets[internalSheetName]);
-
-      if(!dataArray.length) {
-        triggerToast('Spreadsheet extraction completed but found 0 active records.', 'error');
-        return;
-      }
+      const dataArray = XLSX.utils.sheet_to_json(loadedWorkbook.Sheets[loadedWorkbook.SheetNames[0]]);
+      if(!dataArray.length) { triggerToast('Spreadsheet contains 0 records.', 'error'); return; }
 
       const formattedPayloads = dataArray.map(row => ({
-        name: row['Name'] || row['name'] || 'Unspecified Upload Entry',
-        uni: row['University'] || row['university'] || row['Institution'] || 'Unknown Target',
-        type: row['Type'] || row['type'] || 'Professor',
-        country: row['Country'] || row['country'] || 'Canada',
-        dept: row['Department'] || row['dept'] || '',
-        degree: row['Degree'] || row['degree'] || 'MS',
-        areas: row['Research Areas'] || row['areas'] || '',
-        funding: row['Funding'] || row['funding'] || 'Unknown',
-        fit: String(row['Priority Target'] || row['fit'] || 'no').toLowerCase().includes('yes') ? 'yes' : 'no',
-        status: row['Status'] || row['status'] || 'Not Applied',
-        deadline: row['Deadline'] || row['deadline'] || '',
-        response: row['Response Updates'] || row['response'] || '',
-        email: row['Email'] || row['email'] || '',
-        phone: row['Phone'] || row['phone'] || '',
-        web: row['Profile URL'] || row['web'] || '',
-        portal: row['Portal URL'] || row['portal'] || '',
-        scholar: row['Google Scholar'] || '',
-        linkedin: row['LinkedIn'] || '',
-        twitter: row['Twitter Handle'] || '',
-        rg: row['ResearchGate'] || '',
-        note: row['Strategic Notes'] || '',
+        name: row['Name'] || row['name'] || 'Unspecified Entry',
+        uni: row['University'] || row['Institution'] || 'Unknown Target',
+        type: row['Type'] || 'Professor',
+        country: row['Country'] || 'Canada',
+        dept: row['Department'] || '',
+        degree: row['Degree Framework'] || 'MS',
+        areas: row['Research Areas'] || '',
+        funding: row['Funding Status'] || 'Unknown',
+        fit: String(row['Priority Target'] || 'no').toLowerCase().includes('yes') ? 'yes' : 'no',
+        status: row['Status'] || 'Not Applied',
+        deadline: row['Deadline'] || '',
+        response: row['Response Updates'] || '',
+        email: row['Email Address'] || '',
+        phone: row['Phone'] || '',
+        web: row['Profile URL'] || '',
+        portal: row['Portal URL'] || '',
+        scholar: row['Google Scholar URL'] || '',
+        linkedin: row['LinkedIn URL'] || '',
+        twitter: row['X / Twitter Handle'] || '',
+        rg: row['ResearchGate URL'] || '',
+        note: row['Strategic Notes'] || row['Notes'] || '',
         emailDraft: row['Email Outreach Draft'] || '',
         customLabel: row['Custom Field Label'] || '',
         customValue: row['Custom Field Value'] || ''
       }));
 
-      updateSyncMarkup('loading', 'Injecting Spreadsheet Matrices...');
-      const responseArray = await apiCall('POST', 'entries', formattedPayloads);
-      triggerToast(`Successfully unified ${responseArray.length} entries to cloud repository.`, 'success');
+      updateSyncMarkup('loading', 'Uploading Sheet Configurations...');
+      await apiCall('POST', 'entries', formattedPayloads);
+      triggerToast('Spreadsheet entries integrated into database successfully.', 'success');
       loadEntries();
-    } catch(err) {
-      triggerToast(`Spreadsheet validation failed: ${err.message}`, 'error');
-    }
+    } catch(err) { triggerToast(`Validation error: ${err.message}`, 'error'); }
   };
   fileReader.readAsArrayBuffer(targetUploadedFile);
   event.target.value = ''; 
 }
 
 function exportToExcel() {
-  if(!entries.length) { triggerToast('No functional scope matrices to deploy', 'error'); return; }
-  
+  if(!entries.length) { triggerToast('No scope indices documented to package.', 'error'); return; }
   const outputRows = entries.map(x => ({
-    'Name': x.name,
-    'University': x.uni,
-    'Type': x.type,
-    'Country': x.country,
-    'Department': x.dept || '',
-    'Degree Framework': x.degree,
-    'Research Areas': x.areas || '',
-    'Funding Status': x.funding,
-    'Priority Target': x.fit === 'yes' ? 'Yes' : 'No',
-    'Status': x.status,
-    'Deadline': x.deadline || '',
-    'Response Updates': x.response || '',
-    'Email Address': x.email || '',
-    'Phone': x.phone || '',
-    'Profile URL': x.web || '',
-    'Portal URL': x.portal || '',
-    'Strategic Notes': x.note || '',
-    'Email Outreach Draft': x.emailDraft || '',
-    'Custom Field Label': x.customLabel || '',
-    'Custom Field Value': x.customValue || ''
+    'Name': x.name, 'University': x.uni, 'Type': x.type, 'Country': x.country, 'Department': x.dept || '', 'Degree Framework': x.degree, 'Research Areas': x.areas || '', 'Funding Status': x.funding, 'Priority Target': x.fit === 'yes' ? 'Yes' : 'No', 'Status': x.status, 'Deadline': x.deadline || '', 'Response Updates': x.response || '', 'Email Address': x.email || '', 'Phone': x.phone || '', 'Profile URL': x.web || '', 'Portal URL': x.portal || '', 'Google Scholar URL': x.scholar || '', 'LinkedIn URL': x.linkedin || '', 'X / Twitter Handle': x.twitter || '', 'ResearchGate URL': x.rg || '', 'Notes': x.note || '', 'Email Outreach Draft': x.emailDraft || '', 'Custom Field Label': x.customLabel || '', 'Custom Field Value': x.customValue || ''
   }));
-
   const sheetObject = XLSX.utils.json_to_sheet(outputRows);
   const workbookObject = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbookObject, sheetObject, 'Intake Pipelines');
+  XLSX.utils.book_append_sheet(workbookObject, sheetObject, 'Applications Index');
   XLSX.writeFile(workbookObject, `MS_Tracker_Export_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 
 function downloadTemplate() {
-  const matrixHeaders = [[
-    'Name', 'University', 'Type', 'Country', 'Department', 'Degree Framework', 
-    'Research Areas', 'Funding Status', 'Priority Target', 'Status', 'Deadline', 
-    'Response Updates', 'Email Address', 'Phone', 'Profile URL', 'Portal URL', 
-    'Strategic Notes', 'Email Outreach Draft', 'Custom Field Label', 'Custom Field Value'
-  ]];
-  const dummyRow = [
-    'Prof. Jeremy Clark', 'Concordia University', 'Professor', 'Canada', 'CIISE', 'MS',
-    'Blockchain, Cryptography', 'Fully Funded', 'Yes', 'Not Applied', '2026-12-15',
-    'Awaiting opening date', 'jeremy.clark@concordia.ca', '', 'https://...', 'https://...',
-    'Focuses heavily on decentralized ledgers.', '', '', ''
-  ];
+  const matrixHeaders = [[ 'Name', 'University', 'Type', 'Country', 'Department', 'Degree Framework', 'Research Areas', 'Funding Status', 'Priority Target', 'Status', 'Deadline', 'Response Updates', 'Email Address', 'Phone', 'Profile URL', 'Portal URL', 'Google Scholar URL', 'LinkedIn URL', 'X / Twitter Handle', 'ResearchGate URL', 'Notes', 'Email Outreach Draft', 'Custom Field Label', 'Custom Field Value' ]];
+  const dummyRow = [ 'Prof. Jeremy Clark', 'Concordia University', 'Professor', 'Canada', 'CIISE', 'MS', 'Blockchain, Cryptography', 'Fully Funded', 'Yes', 'Not Applied', '2026-12-15', '', 'jeremy.clark@concordia.ca', '', 'https://...', 'https://...', '', '', '', '', 'Alignment matches Mitacs framework perfectly.', '', '', '' ];
   matrixHeaders.push(dummyRow);
-  
   const targetSheet = XLSX.utils.aoa_to_sheet(matrixHeaders);
   const targetBook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(targetBook, targetSheet, 'Template Specification');
+  XLSX.utils.book_append_sheet(targetBook, targetSheet, 'Import Structural Guide');
   XLSX.writeFile(targetBook, 'MS_Tracker_Import_Template.xlsx');
 }
 
-/* ── DIALOG BOX FRAMEWORKS ── */
+/* ── PROFILE MODAL MANAGER ── */
 function populateFormElements(node) {
   const write = (id, val) => { const target = document.getElementById(id); if(target) target.value = val || ''; };
   write('fTypeField', node.type || 'Professor');
   write('fCountryField', node.country || 'Canada');
-  write('fName', node.name);
-  write('fUni', node.uni);
-  write('fDept', node.dept);
-  write('fDegree', node.degree || 'MS');
-  write('fAreas', node.areas);
-  write('fFundingField', node.funding || 'Unknown');
-  write('fFit', node.fit || 'no');
-  write('fStatus2', node.status || 'Not Applied');
-  write('fDeadline', node.deadline);
-  write('fResponse', node.response);
-  write('fEmail', node.email);
-  write('fPhone', node.phone);
-  write('fWeb', node.web);
-  write('fPortal', node.portal);
-  write('fScholar', node.scholar);
-  write('fLinkedIn', node.linkedin);
-  write('fTwitter', node.twitter);
-  write('fRG', node.rg);
-  write('fNote', node.note);
-  write('fEmailDraft', node.emailDraft);
-  write('fCLabel', node.customLabel);
-  write('fCValue', node.customValue);
+  write('fName', node.name); write('fUni', node.uni); write('fDept', node.dept);
+  write('fDegree', node.degree || 'MS'); write('fAreas', node.areas);
+  write('fFundingField', node.funding || 'Unknown'); write('fFit', node.fit || 'no');
+  write('fStatus2', node.status || 'Not Applied'); write('fDeadline', node.deadline);
+  write('fResponse', node.response); write('fEmail', node.email); write('fPhone', node.phone);
+  write('fWeb', node.web); write('fPortal', node.portal); write('fScholar', node.scholar);
+  write('fLinkedIn', node.linkedin); write('fTwitter', node.twitter); write('fRG', node.rg);
+  write('fNote', node.note); write('fEmailDraft', node.emailDraft);
+  write('fCLabel', node.customLabel); write('fCValue', node.customValue);
 }
 
 function openForm(id) {
   editId = id || null;
-  document.getElementById('formTitle').textContent = id ? 'Modify Node Parameters' : 'Instantiate Structural Profile';
+  document.getElementById('formTitle').textContent = id ? 'Edit Entry Parameters' : 'Add New Entry';
   if (id) {
     const nodeInstance = entries.find(e => e.id === id);
     if(nodeInstance) populateFormElements(nodeInstance);
-  } else {
-    populateFormElements({});
-  }
+  } else { populateFormElements({}); }
   document.getElementById('ovForm').classList.add('active');
 }
 function closeForm() { document.getElementById('ovForm').classList.remove('active'); editId = null; }
 
 async function submitForm() {
   const pull = id => document.getElementById(id).value.trim();
-  const nameVal = pull('fName');
-  const uniVal = pull('fUni');
-
-  if(!nameVal || !uniVal) { triggerToast('Mandatory criteria constraints missing (Name/Institution).', 'error'); return; }
+  const nameVal = pull('fName'); const uniVal = pull('fUni');
+  if(!nameVal || !uniVal) { triggerToast('Name and University are mandatory inputs.', 'error'); return; }
 
   const dataPayload = {
-    id: editId || undefined,
-    type: pull('fTypeField'), country: pull('fCountryField'), name: nameVal, uni: uniVal,
-    dept: pull('fDept'), degree: pull('fDegree'), areas: pull('fAreas'),
-    funding: pull('fFundingField'), fit: pull('fFit'), status: pull('fStatus2'),
-    deadline: pull('fDeadline'), response: pull('fResponse'),
-    email: pull('fEmail'), phone: pull('fPhone'), web: pull('fWeb'), portal: pull('fPortal'),
-    scholar: pull('fScholar'), linkedin: pull('fLinkedIn'), twitter: pull('fTwitter'), rg: pull('fRG'),
-    note: pull('fNote'), emailDraft: pull('fEmailDraft'),
-    customLabel: pull('fCLabel'), customValue: pull('fCValue')
+    id: editId || undefined, type: pull('fTypeField'), country: pull('fCountryField'), name: nameVal, uni: uniVal, dept: pull('fDept'), degree: pull('fDegree'), areas: pull('fAreas'), funding: pull('fFundingField'), fit: pull('fFit'), status: pull('fStatus2'), deadline: pull('fDeadline'), response: pull('fResponse'), email: pull('fEmail'), phone: pull('fPhone'), web: pull('fWeb'), portal: pull('fPortal'), scholar: pull('fScholar'), linkedin: pull('fLinkedIn'), twitter: pull('fTwitter'), rg: pull('fRG'), note: pull('fNote'), emailDraft: pull('fEmailDraft'), customLabel: pull('fCLabel'), customValue: pull('fCValue')
   };
 
   const cBtn = document.getElementById('submitBtn');
-  cBtn.disabled = true; cBtn.textContent = 'Committing Telemetry...';
-
+  cBtn.disabled = true; cBtn.textContent = 'Saving Context...';
   try {
     if(editId) {
       await apiCall('PUT', `entry?id=${editId}`, dataPayload);
-      triggerToast('Node dimensions modified successfully', 'success');
+      triggerToast('Entry modifications logged.', 'success');
     } else {
       await apiCall('POST', 'entries', dataPayload);
-      triggerToast('New node structural asset indexed', 'success');
+      triggerToast('New application entry tracked successfully.', 'success');
     }
     closeForm(); loadEntries();
-  } catch(e) {
-    triggerToast(`Write dropped: ${e.message}`, 'error');
-  } finally {
-    cBtn.disabled = false; cBtn.textContent = 'Commit Entry';
-  }
+  } catch(e) { triggerToast(`Database drop error: ${e.message}`, 'error'); }
+  finally { cBtn.disabled = false; cBtn.textContent = 'Save Entry'; }
 }
 
 function stageDeletionRoutine(id) { deleteId = id; document.getElementById('ovConfirm').classList.add('active'); }
@@ -1121,13 +1042,27 @@ async function confirmDelete() {
   executionTargetBtn.disabled = true;
   try {
     await apiCall('DELETE', `entry?id=${deleteId}`);
-    triggerToast('Target erased', 'success');
-    closeConfirm(); loadEntries();
-  } catch(e) {
-    triggerToast(`Purge operation aborted: ${e.message}`, 'error');
-  } finally {
-    executionTargetBtn.disabled = false;
-  }
+    triggerToast('Entry deleted successfully.', 'success');
+    closeConfirm(); closeDetail(); loadEntries();
+  } catch(e) { triggerToast(`Operation dropped: ${e.message}`, 'error'); }
+  finally { executionTargetBtn.disabled = false; }
+}
+
+function buildModalTopLinksRow(item) {
+  let html = '';
+  const mapLargeLink = (key, url, title, text) => {
+    if(!url) return '';
+    return `<a class="modal-link-large" href="${url.startsWith('http') || key==='email' ? '' : 'https://'}${url}" ${key==='email' ? '' : 'target="_blank" rel="noopener"'} title="${title}">${SVG_ICONS[key]} ${text}</a>`;
+  };
+  
+  if(item.email) html += mapLargeLink('email', `mailto:${item.email}`, 'Email Channel', 'Email Address');
+  if(item.web) html += mapLargeLink('web', item.web, 'Website', 'Profile Page');
+  if(item.portal) html += mapLargeLink('portal', item.portal, 'Portal Hub', 'Application Portal');
+  if(item.linkedin) html += mapLargeLink('linkedin', item.linkedin, 'LinkedIn Profile', 'LinkedIn');
+  if(item.scholar) html += mapLargeLink('scholar', item.scholar, 'Google Scholar Profile', 'Scholar Citations');
+  if(item.rg) html += mapLargeLink('rg', item.rg, 'ResearchGate Profile', 'ResearchGate');
+  
+  return html;
 }
 
 function openDetail(id) {
@@ -1135,38 +1070,41 @@ function openDetail(id) {
   if(!element) return;
 
   document.getElementById('dtName').innerHTML = `${escapeContent(element.name)} ${element.fit==='yes'?'<span style="color:var(--accent)">★</span>':''}`;
-  document.getElementById('dtUni').textContent = `${element.uni} ${element.dept ? '/ '+element.dept : ''} — Region Code: ${element.country}`;
+  document.getElementById('dtUni').textContent = `${element.uni} ${element.dept ? '/ '+element.dept : ''} — ${element.country}`;
 
-  const renderDataField = (title, stringValue, evaluateAsLink = false) => {
+  // Build top clean anchor navigation port inside read view overlay modal component canvas
+  const linksHtml = buildModalTopLinksRow(element);
+  const linksBox = document.getElementById('modalTopLinksContainer');
+  if(linksHtml) {
+    linksBox.innerHTML = `<label>Quick Links Port:</label>${linksHtml}`;
+    linksBox.style.display = 'flex';
+  } else {
+    linksBox.style.display = 'none';
+  }
+
+  const renderDataField = (title, stringValue) => {
     if(!stringValue) return `<div class="detail-row"><span class="detail-label">${title}</span><span class="detail-value" style="opacity:0.25; font-style:italic">—</span></div>`;
-    const layout = evaluateAsLink ? `<a href="${escapeContent(stringValue)}" target="_blank" rel="noopener">${escapeContent(stringValue)} ↗</a>` : escapeContent(stringValue);
-    return `<div class="detail-row"><span class="detail-label">${title}</span><span class="detail-value">${layout}</span></div>`;
+    return `<div class="detail-row"><span class="detail-label">${title}</span><span class="detail-value">${escapeContent(stringValue)}</span></div>`;
   };
 
   document.getElementById('dtBody').innerHTML = `
-    ${renderDataField('Pipeline State', element.status)}
+    ${renderDataField('Current Status', element.status)}
     ${renderDataField('Classification', `${element.type} (${element.degree})`)}
-    ${renderDataField('Fiscal Matrix', element.funding)}
-    ${renderDataField('Research Scope', element.areas)}
-    ${renderDataField('Target Cutoff', element.deadline)}
-    ${renderDataField('Log Update', element.response)}
+    ${renderDataField('Funding Profile', element.funding)}
+    ${renderDataField('Research Areas', element.areas)}
+    ${renderDataField('Deadline Date', element.deadline)}
+    ${renderDataField('Updates Logs', element.response)}
     <div style="margin:12px 0; border-bottom:1px dashed var(--border)"></div>
-    ${renderDataField('Direct Mail', element.email)}
-    ${renderDataField('Phone Node', element.phone)}
-    ${renderDataField('Resource Matrix', element.web, true)}
-    ${renderDataField('Processing Portal', element.portal, true)}
-    <div style="margin:12px 0; border-bottom:1px dashed var(--border)"></div>
-    ${renderDataField('Google Scholar', element.scholar, true)}
-    ${renderDataField('LinkedIn Vector', element.linkedin, true)}
-    ${renderDataField('ResearchGate', element.rg, true)}
-    <div style="margin:12px 0; border-bottom:1px dashed var(--border)"></div>
-    <div class="form-group"><label>Strategic Storage Field Context</label><div style="background:var(--bg-input); padding:12px; border-radius:8px; font-size:13px; white-space:pre-wrap; margin-top:4px">${element.note ? escapeContent(element.note) : 'No metrics mapped.'}</div></div>
-    <div class="form-group" style="margin-top:12px"><label>Outreach Package Payload</label><div style="background:var(--bg-input); font-family:var(--font-mono); padding:12px; border-radius:8px; font-size:12px; white-space:pre-wrap; margin-top:4px">${element.emailDraft ? escapeContent(element.emailDraft) : 'Payload blank.'}</div></div>
+    ${element.phone ? renderDataField('Office Phone', element.phone) : ''}
+    <div class="form-group" style="margin-top:12px;"><label>Profile Notes</label><div style="background:var(--bg-input); padding:12px; border-radius:8px; font-size:13px; white-space:pre-wrap; margin-top:4px; line-height:1.6; color:#d1d5db;">${element.note ? escapeContent(element.note) : 'No notes documented.'}</div></div>
+    <div class="form-group" style="margin-top:16px;"><label>Email Outreach Template</label><div style="background:var(--bg-input); font-family:var(--font-mono); padding:12px; border-radius:8px; font-size:12px; white-space:pre-wrap; margin-top:4px; color:#9ca3af; border:1px solid var(--border); line-height:1.5;">${element.emailDraft ? escapeContent(element.emailDraft) : 'Outreach payload block blank.'}</div></div>
   `;
 
+  // Explicit bottom action button layout configurations mapped safely here
   document.getElementById('dtFoot').innerHTML = `
-    <button class="btn btn-secondary" onclick="closeDetail(); openForm('${element.id}')">Modify Layout</button>
-    <button class="btn btn-primary" onclick="closeDetail()">Close Workspace</button>
+    <button class="btn btn-danger" onclick="stageDeletionRoutine('${element.id}')">Delete</button>
+    <button class="btn btn-secondary" onclick="closeDetail(); openForm('${element.id}')">Edit Profile</button>
+    <button class="btn btn-primary" onclick="closeDetail()">Close Window</button>
   `;
   document.getElementById('ovDetail').classList.add('active');
 }

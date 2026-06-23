@@ -795,7 +795,7 @@ function generateCvLinksRow(item, sizeClass = '') {
   let html = '';
   const mapIcon = (key, url, title, brandClass) => {
     if(!url) return '';
-    return `<a class="cv-anchor-node ${brandClass} ${sizeClass}" href="${url.startsWith('http') || key==='email' ? '' : 'https://'}${url}" ${key==='email' ? '' : 'target="_blank" rel="noopener"'} title="${title}" onclick="event.stopPropagation();">${SVG_ICONS[key]}</a>`;
+    return `<span class="cv-anchor-node ${brandClass} ${sizeClass}" href="${url.startsWith('http') || key==='email' ? '' : 'https://'}${url}" ${key==='email' ? '' : 'target="_blank" rel="noopener"'} title="${title}" onclick="event.stopPropagation(); window.open('${url.startsWith('http') || key==='email' ? '' : 'https://'}${url}', '_blank')">${SVG_ICONS[key]}</span>`;
   };
   
   if(item.email) html += mapIcon('email', `mailto:${item.email}`, 'Email Address', 'icon-brand-email');
@@ -999,7 +999,7 @@ function handleExcelFile(event) {
 function exportToExcel() {
   if(!entries.length) { triggerToast('No functional lines to deploy.', 'error'); return; }
   const outputRows = entries.map(x => ({
-    'Name': x.name, 'University': x.uni, 'Type': x.type, 'Country': x.country, 'Department': x.dept || '', 'Degree Framework': x.degree, 'Research Areas': x.areas || '', 'Funding Status': x.funding, 'Priority Target': x.fit === 'yes' ? 'Yes' : 'No', 'Status': x.status, 'Deadline': x.deadline || '', 'Response Updates': x.response || '', 'Email Address': x.email || '', 'Phone': x.phone || '', 'Profile URL': x.web || '', 'Portal URL': x.portal || '', 'Google Scholar URL': x.scholar || '', 'LinkedIn URL': x.linkedin || '', 'X / Twitter Handle': x.twitter || '', 'ResearchGate URL': x.rg || '', 'Notes': x.note || '', 'Email Outreach Draft': x.emailDraft || '', 'Custom Field Label': x.customField Label || '', 'Custom Field Value': x.customValue || ''
+    'Name': x.name, 'University': x.uni, 'Type': x.type, 'Country': x.country, 'Department': x.dept || '', 'Degree Framework': x.degree, 'Research Areas': x.areas || '', 'Funding Status': x.funding, 'Priority Target': x.fit === 'yes' ? 'Yes' : 'No', 'Status': x.status, 'Deadline': x.deadline || '', 'Response Updates': x.response || '', 'Email Address': x.email || '', 'Phone': x.phone || '', 'Profile URL': x.web || '', 'Portal URL': x.portal || '', 'Google Scholar URL': x.scholar || '', 'LinkedIn URL': x.linkedin || '', 'X / Twitter Handle': x.twitter || '', 'ResearchGate URL': x.rg || '', 'Notes': x.note || '', 'Email Outreach Draft': x.emailDraft || '', 'Custom Field Label': x.customLabel || '', 'Custom Field Value': x.customValue || ''
   }));
   const sheetObject = XLSX.utils.json_to_sheet(outputRows);
   const workbookObject = XLSX.utils.book_new();
@@ -1111,7 +1111,6 @@ function openDetail(id) {
   document.getElementById('dtName').innerHTML = `${escapeContent(element.name)} ${element.fit==='yes'?'<span style="color:var(--accent)">★</span>':''}`;
   document.getElementById('dtUni').textContent = `${element.uni} ${element.dept ? '/ '+element.dept : ''} — ${element.country}`;
 
-  // Dynamically set first two characters of University Name inside the circular logo link trigger element
   const mapButton = document.getElementById('dtMapBtn');
   const universityInitials = element.uni ? element.uni.replace(/university of/ii, '').trim().substring(0, 2).toUpperCase() : 'UN';
   mapButton.textContent = universityInitials;
@@ -1155,8 +1154,10 @@ function openDetail(id) {
 }
 function closeDetail() { document.getElementById('ovDetail').classList.remove('active'); }
 
+// Simple utility function to keep layout string injections clean
 function escapeContent(stringText) {
-  return String(stringText || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  if (!stringText) return '';
+  return String(stringText).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function triggerToast(message, variant = 'info') {

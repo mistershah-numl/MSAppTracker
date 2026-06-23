@@ -4,886 +4,1134 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MS Application Tracker — Muhammad Shah</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-/* ── TOKENS ── */
-:root{
-  --bg:#0b1520;--bg2:#111e2e;--bg3:#172338;--bg4:#1e2f45;
-  --bdr:#253a55;--bdr2:#2e4868;
-  --txt:#dde3ee;--dim:#6b82a0;--dim2:#8fa4c0;
-  --gold:#c9923a;--gold2:#e8b060;
-  --teal:#4fa09a;--sage:#6aaa7e;--coral:#d9604a;
-  --lav:#8a7dcb;--sky:#5b9fcf;--amber:#d4a520;
-  --red:#c0392b;--green:#27ae60;
-  --mono:'SF Mono',Monaco,'Cascadia Code','Fira Code',monospace;
-  --serif:Georgia,'Iowan Old Style','Source Serif Pro',serif;
-  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  --r:6px;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:14px;min-height:100vh;}
-
-/* ── LOCK SCREEN ── */
-#lockScreen{
-  position:fixed;inset:0;background:var(--bg);z-index:999;
-  display:flex;align-items:center;justify-content:center;
-}
-.lock-box{
-  background:var(--bg2);border:1px solid var(--bdr2);border-radius:10px;
-  padding:40px 36px;width:100%;max-width:380px;text-align:center;
-}
-.lock-logo{width:52px;height:52px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:18px;font-weight:700;color:var(--bg);margin:0 auto 18px;}
-.lock-box h2{font-family:var(--serif);font-size:22px;margin-bottom:6px;}
-.lock-box p{font-size:13px;color:var(--dim);margin-bottom:22px;line-height:1.5;}
-.lock-box input{width:100%;background:var(--bg3);color:var(--txt);border:1px solid var(--bdr);border-radius:var(--r);padding:11px 14px;font-family:var(--mono);font-size:15px;letter-spacing:.2em;text-align:center;margin-bottom:12px;}
-.lock-box input:focus{outline:1px solid var(--gold);border-color:var(--gold);}
-.lock-box button{width:100%;background:var(--gold);color:var(--bg);border:none;border-radius:var(--r);padding:11px;font-family:var(--mono);font-size:13px;font-weight:700;cursor:pointer;}
-.lock-box button:hover{background:var(--gold2);}
-.lock-err{color:var(--coral);font-size:12px;margin-top:8px;min-height:16px;}
-
-/* ── TOPBAR ── */
-.topbar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:12px 22px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.logo{display:flex;align-items:center;gap:10px;}
-.logo-icon{width:30px;height:30px;background:var(--gold);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--bg);flex-shrink:0;}
-.logo-text{font-family:var(--serif);font-size:16px;font-weight:700;}
-.logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);}
-.topbar-r{display:flex;gap:8px;align-items:center;}
-.sync-status{font-family:var(--mono);font-size:10px;padding:4px 10px;border-radius:20px;border:1px solid var(--bdr);}
-.sync-status.ok{color:var(--green);border-color:var(--green);}
-.sync-status.loading{color:var(--amber);border-color:var(--amber);}
-.sync-status.err{color:var(--coral);border-color:var(--coral);}
-.btn-primary{background:var(--gold);color:var(--bg);border:none;border-radius:var(--r);padding:8px 14px;font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;transition:background .15s;}
-.btn-primary:hover{background:var(--gold2);}
-.btn-ghost{background:transparent;color:var(--dim2);border:1px solid var(--bdr2);border-radius:var(--r);padding:7px 12px;font-family:var(--mono);font-size:11px;cursor:pointer;transition:all .15s;}
-.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
-/* ── MODERN STAT STRIP ── */
-
-.stat-strip{
-background:var(--bg2);
-border-bottom:1px solid var(--bdr);
-padding:16px 22px;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-gap:12px;
+:root {
+  --bg: #030712;
+  --bg-card: rgba(17, 24, 39, 0.7);
+  --bg-input: #1f2937;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-focus: #3b82f6;
+  --text: #f3f4f6;
+  --text-muted: #9ca3af;
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --accent: #f59e0b;
+  --success: #10b981;
+  --danger: #ef4444;
+  --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --radius: 12px;
 }
 
-.stat{
-background:linear-gradient(
-180deg,
-rgba(255,255,255,.03),
-rgba(255,255,255,.01)
-);
-border:1px solid var(--bdr);
-border-radius:12px;
-padding:16px;
-display:flex;
-flex-direction:column;
-align-items:flex-start;
-justify-content:center;
-gap:8px;
-cursor:pointer;
-transition:all .2s ease;
-min-height:90px;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--bg);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
 }
 
-.stat:hover{
-transform:translateY(-2px);
-border-color:var(--gold);
-box-shadow:0 6px 20px rgba(0,0,0,.25);
+/* ── ACCESS SCREEN ── */
+#lockScreen {
+  position: fixed; inset: 0; background: #090d16; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+}
+.lock-card {
+  background: rgba(17, 24, 39, 0.85); border: 1px solid var(--border); border-radius: 16px;
+  padding: 40px; width: 100%; max-width: 400px; text-align: center;
+  box-shadow: var(--card-shadow); backdrop-filter: blur(20px);
+}
+.lock-avatar {
+  width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary), var(--success));
+  border-radius: 14px; display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 24px; color: #fff; margin: 0 auto 24px;
+}
+.lock-card h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.025em; }
+.lock-card p { color: var(--text-muted); font-size: 13px; margin-bottom: 24px; }
+.lock-card input {
+  width: 100%; background: var(--bg-input); color: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px; text-align: center; font-family: var(--font-mono);
+  font-size: 16px; letter-spacing: 0.25em; margin-bottom: 16px; transition: all 0.2s;
+}
+.lock-card input:focus { outline: none; border-color: var(--border-focus); box-shadow: 0 0 0 2px rgba(59,130,246,0.3); }
+.lock-card button {
+  width: 100%; background: var(--primary); color: white; border: none; font-weight: 600;
+  border-radius: var(--radius); padding: 12px; cursor: pointer; transition: background 0.2s;
+}
+.lock-card button:hover { background: var(--primary-hover); }
+.lock-err { color: var(--danger); font-size: 12px; margin-top: 12px; min-height: 18px; }
+
+/* ── HERO & NAVIGATION ── */
+.dashboard-header {
+  backdrop-filter: blur(16px); background: rgba(3, 7, 18, 0.6);
+  border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000;
+  padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+}
+.brand-group { display: flex; align-items: center; gap: 14px; }
+.brand-logo {
+  width: 38px; height: 38px; background: linear-gradient(135deg, var(--primary), #8b5cf6);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; color: #fff; font-size: 14px;
+}
+.brand-title h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
+.brand-title p { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); }
+
+.nav-actions { display: flex; align-items: center; gap: 12px; }
+.status-badge {
+  font-family: var(--font-mono); font-size: 11px; padding: 6px 12px; border-radius: 30px;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+}
+.status-badge.ok { color: var(--success); border-color: rgba(16,185,129,0.3); }
+.status-badge.loading { color: var(--accent); border-color: rgba(245,158,11,0.3); }
+.status-badge.err { color: var(--danger); border-color: rgba(239,68,68,0.3); }
+
+/* ── UTILITY BUTTONS ── */
+.btn {
+  font-family: var(--font-sans); font-size: 13px; font-weight: 600; padding: 8px 16px;
+  border-radius: var(--radius); cursor: pointer; display: inline-flex; align-items: center;
+  gap: 8px; border: 1px solid transparent; transition: all 0.2s; height: 38px;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-secondary { background: rgba(255,255,255,0.05); color: var(--text); border-color: var(--border); }
+.btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: var(--text-muted); }
+.btn-accent { background: rgba(245, 158, 11, 0.1); color: var(--accent); border-color: rgba(245,158,11,0.2); }
+.btn-accent:hover { background: rgba(245, 158, 11, 0.2); }
+.btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border-color: rgba(239,68,68,0.2); }
+.btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
+
+/* ── HERO VISUAL METRICS ── */
+.hero-analytics { padding: 32px 32px 16px; display: grid; grid-template-columns: 2fr 3fr; gap: 24px; }
+@media(max-width:1024px) { .hero-analytics { grid-template-columns: 1fr; } }
+
+.progress-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 24px; display: flex; flex-direction: column; justify-content: space-between;
+  box-shadow: var(--card-shadow); backdrop-filter: blur(10px);
+}
+.progress-info { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+.progress-info h3 { font-size: 14px; color: var(--text-muted); font-weight: 500; }
+.progress-info .percentage { font-size: 36px; font-weight: 800; color: var(--success); letter-spacing: -0.05em; }
+.progress-track { height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; margin-bottom: 16px; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--success)); width: 0%; transition: width 0.5s ease; }
+.progress-meta { font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; }
+
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+@media(max-width:640px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat-box {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px; display: flex; flex-direction: column; justify-content: center;
+  position: relative; overflow: hidden; cursor: pointer; transition: all 0.2s;
+  box-shadow: var(--card-shadow); backdrop-filter: blur(10px);
+}
+.stat-box:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.2); }
+.stat-box.active-filter { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+.stat-box::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--text-muted);
+}
+.stat-box.s-total::before { background: #fff; }
+.stat-box.s-ap::before { background: var(--primary); }
+.stat-box.s-wr::before { background: var(--accent); }
+.stat-box.s-in::before { background: #8b5cf6; }
+.stat-box.s-of::before { background: var(--success); }
+.stat-box.s-re::before { background: var(--danger); }
+.stat-box.s-sc::before { background: #ec4899; }
+
+.stat-box .count { font-size: 24px; font-weight: 800; line-height: 1.2; letter-spacing: -0.03em; }
+.stat-box .label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 4px; }
+
+/* ── TOOLBAR / FILTER SYSTEM ── */
+.filter-bar {
+  padding: 0 32px 24px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+}
+.search-container { position: relative; flex: 1; min-width: 260px; }
+.search-container input {
+  width: 100%; background: var(--bg-input); color: white; border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 16px 10px 38px; font-size: 13px; transition: all 0.2s;
+}
+.search-container input:focus { outline: none; border-color: var(--border-focus); }
+.search-container svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--text-muted); }
+
+.select-input {
+  background: var(--bg-input); color: var(--text); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 14px; font-size: 13px; outline: none; cursor: pointer; min-width: 130px;
+}
+.select-input:focus { border-color: var(--border-focus); }
+
+/* ── BULK MANAGEMENT BAR ── */
+#bulkBar {
+  margin: 0 32px 16px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: var(--radius); padding: 12px 20px; display: none; align-items: center; justify-content: space-between;
+}
+.bulk-info { font-weight: 600; color: #60a5fa; font-size: 13px; }
+.bulk-controls { display: flex; gap: 12px; align-items: center; }
+
+/* ── GRAPHIC MAIN GRID & CARDS ── */
+.app-container { padding: 0 32px 64px; }
+.cards-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+
+.modern-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 20px; display: flex; flex-direction: column; gap: 14px; position: relative;
+  box-shadow: var(--card-shadow); backdrop-filter: blur(12px); transition: all 0.2s ease;
+}
+.modern-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15); box-shadow: 0 20px 40px -15px rgba(0,0,0,0.9); }
+
+/* Bulk select checkbox placement */
+.card-checkbox { position: absolute; top: 22px; left: 20px; width: 16px; height: 16px; cursor: pointer; z-index: 10; display: none; }
+.modern-card.selectable { padding-left: 48px; }
+.modern-card.selectable .card-checkbox { display: block; }
+
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.avatar-wrapper { display: flex; gap: 12px; align-items: center; flex: 1; }
+.uni-avatar {
+  width: 40px; height: 40px; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; color: var(--primary); font-size: 14px; text-transform: uppercase; flex-shrink: 0;
+}
+.title-block { display: flex; flex-direction: column; }
+.profile-name { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: -0.01em; display: inline-flex; align-items: center; gap: 4px; }
+.star-indicator { color: var(--accent); font-size: 14px; }
+.institution-text { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+.status-pill {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 20px; border: 1px solid transparent; white-space: nowrap;
+}
+.status-pill.p-na { color: #9ca3af; background: rgba(156,163,175,0.1); border-color: rgba(156,163,175,0.2); }
+.status-pill.p-ap { color: #3b82f6; background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.2); }
+.status-pill.p-wr { color: #f59e0b; background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.2); }
+.status-pill.p-in { color: #8b5cf6; background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.2); }
+.status-pill.p-of { color: #10b981; background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.2); }
+.status-pill.p-re { color: #ef4444; background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.2); }
+.status-pill.p-sc { color: #ec4899; background: rgba(236,72,153,0.1); border-color: rgba(236,72,153,0.2); }
+
+.tag-field { display: flex; flex-wrap: wrap; gap: 6px; }
+.meta-badge {
+  font-size: 11px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  border-radius: 6px; padding: 3px 8px; color: var(--text-muted);
+}
+.research-chip {
+  font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 6px;
+  background: rgba(59, 130, 246, 0.08); color: #93c5fd; border: 1px solid rgba(59,130,246,0.15);
 }
 
-.stat.active-filter{
-border-color:var(--gold);
-background:rgba(201,146,58,.08);
-box-shadow:0 0 0 1px rgba(201,146,58,.25);
+.card-body-note { font-size: 12.5px; color: #d1d5db; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 36px; }
+
+.card-footer-metrics { display: flex; justify-content: space-between; align-items: center; pt: 12px; border-top: 1px solid var(--border); margin-top: auto; font-size: 11px; color: var(--text-muted); }
+.card-actions-row { display: flex; gap: 4px; }
+.action-icon-btn {
+  background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+  width: 28px; height: 28px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
 }
+.action-icon-btn:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+.action-icon-btn.btn-del-hover:hover { color: var(--danger); border-color: rgba(239,68,68,0.4); }
 
-.stat-lbl{
-font-family:var(--sans);
-font-size:12px;
-font-weight:600;
-color:var(--dim2);
-letter-spacing:.02em;
-text-transform:none;
-order:1;
+/* ── REWORKED GRID/TABLE VIEW CONTAINER ── */
+.table-view-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: var(--card-shadow); backdrop-filter: blur(12px); }
+.table-wrapper { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+th { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); padding: 14px 20px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.2); }
+td { padding: 14px 20px; border-bottom: 1px solid var(--border); color: #e5e7eb; vertical-align: middle; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* ── MODALS (GLASS CONFIG) ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.active { display: flex; }
+.modal-window { background: #0f172a; border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 720px; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; box-shadow: var(--card-shadow); }
+.modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.modal-header h2 { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
+.modal-close { background: transparent; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
+.modal-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: rgba(0,0,0,0.2); }
+
+.form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.colspan-2 { grid-column: span 2; }
+.form-group label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+.form-group input, .form-group select, .form-group textarea {
+  background: var(--bg-input); color: white; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; font-family: var(--font-sans); outline: none; transition: border 0.2s;
 }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--border-focus); }
+.form-group textarea { resize: vertical; min-height: 80px; }
+.section-divider { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-top: 8px; letter-spacing: 0.1em; }
 
-.stat-num{
-font-family:var(--sans);
-font-size:32px;
-font-weight:800;
-line-height:1;
-letter-spacing:-0.04em;
-order:2;
-}
+/* ── DETAIL COMPONENT PANELS ── */
+.detail-row { display: flex; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.detail-label { width: 140px; font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); text-transform: uppercase; flex-shrink: 0; }
+.detail-value { color: #f3f4f6; font-size: 13.5px; word-break: break-word; }
+.detail-value a { color: var(--primary); text-decoration: none; }
+.detail-value a:hover { text-decoration: underline; }
 
-/* Colors */
+/* ── LIVE TOAST ── */
+.toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+.toast-msg { background: #1e293b; border: 1px solid var(--border); border-radius: 8px; padding: 12px 20px; font-size: 13px; color: #fff; min-width: 260px; box-shadow: var(--card-shadow); animation: slideIn 0.2s ease forwards; border-left: 4px solid var(--primary); }
+.toast-msg.success { border-left-color: var(--success); }
+.toast-msg.error { border-left-color: var(--danger); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-.s-total .stat-num{
-color:#ffffff;
-}
-
-.s-na .stat-num{
-color:#8fa4c0;
-}
-
-.s-ap .stat-num{
-color:#5b9fcf;
-}
-
-.s-wr .stat-num{
-color:#d4a520;
-}
-
-.s-in .stat-num{
-color:#8a7dcb;
-}
-
-.s-of .stat-num{
-color:#27ae60;
-}
-
-.s-re .stat-num{
-color:#d9604a;
-}
-
-.s-sc .stat-num{
-color:#e8b060;
-}
-
-/* Mobile */
-
-@media(max-width:768px){
-
-.stat-strip{
-grid-template-columns:repeat(2,1fr);
-padding:12px 14px;
-}
-
-.stat{
-min-height:80px;
-padding:14px;
-}
-
-.stat-num{
-font-size:26px;
-}
-}
-
-/* ── CONTROLS ── */
-.controls{padding:12px 22px;display:flex;gap:8px;flex-wrap:wrap;background:var(--bg);border-bottom:1px solid var(--bdr);position:sticky;top:57px;z-index:90;}
-.search-wrap{position:relative;flex:1;min-width:200px;}
-.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.4;width:13px;height:13px;}
-input.sinp{width:100%;background:var(--bg3);color:var(--txt);border:1px solid var(--bdr);border-radius:var(--r);padding:8px 11px 8px 32px;font-size:13px;}
-input.sinp:focus{outline:1px solid var(--gold);border-color:var(--gold);}
-select.ctrl{background:var(--bg3);color:var(--txt);border:1px solid var(--bdr);border-radius:var(--r);padding:8px 11px;font-size:13px;min-width:140px;cursor:pointer;}
-select.ctrl:focus{outline:1px solid var(--gold);}
-.vbtns{display:flex;gap:4px;}
-.vbtn{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r);padding:7px 9px;cursor:pointer;color:var(--dim);transition:all .15s;}
-.vbtn.active,.vbtn:hover{background:var(--gold);border-color:var(--gold);color:var(--bg);}
-.vbtn svg{width:15px;height:15px;display:block;}
-
-/* ── MAIN ── */
-.main{padding:18px 22px 80px;}
-.empty-state{text-align:center;padding:70px 20px;color:var(--dim);border:1px dashed var(--bdr2);border-radius:10px;}
-.empty-state .big{font-family:var(--serif);font-size:20px;color:var(--dim2);margin-bottom:8px;}
-.empty-state p{font-size:13px;line-height:1.6;max-width:360px;margin:0 auto 18px;}
-
-/* ── GRID ── */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px;}
-.card{background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;border-left:3px solid var(--bdr);padding:14px;display:flex;flex-direction:column;gap:8px;transition:transform .12s,border-color .12s;position:relative;}
-.card:hover{transform:translateY(-2px);border-color:var(--bdr2);}
-.card[data-s="Not Applied"]{border-left-color:var(--dim);}
-.card[data-s="Applied"]{border-left-color:var(--sky);}
-.card[data-s="Waiting for Response"]{border-left-color:var(--amber);}
-.card[data-s="Interview"]{border-left-color:var(--lav);}
-.card[data-s="Offer Received"]{border-left-color:var(--green);}
-.card[data-s="Rejected"]{border-left-color:var(--red);}
-.card[data-s="Scholarship"]{border-left-color:var(--gold);}
-
-.card-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
-.card-name{font-family:var(--serif);font-size:15px;font-weight:700;line-height:1.3;flex:1;}
-.fit-star{color:var(--gold);font-size:12px;margin-left:3px;}
-.spill{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;border-radius:20px;padding:3px 8px;white-space:nowrap;flex-shrink:0;border:1px solid currentColor;}
-.sp-na{color:var(--dim);} .sp-ap{color:var(--sky);} .sp-wr{color:var(--amber);}
-.sp-in{color:var(--lav);} .sp-of{color:var(--green);} .sp-re{color:var(--red);} .sp-sc{color:var(--gold);}
-.card-uni{font-size:11.5px;color:var(--dim2);}
-.ctag{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--lav);margin-left:6px;}
-.chips{display:flex;flex-wrap:wrap;gap:4px;}
-.chip{font-size:10px;color:var(--dim);background:rgba(255,255,255,.03);border:1px solid var(--bdr);border-radius:20px;padding:2px 7px;display:flex;align-items:center;gap:3px;}
-.cdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.card-note{font-size:12px;color:#b8c4d8;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.card-meta{display:flex;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;color:var(--dim);}
-.card-meta a{color:var(--sky);text-decoration:none;}
-.card-meta a:hover{text-decoration:underline;}
-.card-foot{display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--bdr);}
-.card-date{font-family:var(--mono);font-size:9.5px;color:var(--dim);}
-.card-acts{display:flex;gap:5px;}
-.ibtn{background:none;border:1px solid var(--bdr);border-radius:4px;padding:4px 8px;cursor:pointer;color:var(--dim);font-size:10.5px;font-family:var(--mono);transition:all .15s;display:flex;align-items:center;gap:3px;}
-.ibtn:hover{border-color:var(--gold);color:var(--gold);}
-.ibtn.del:hover{border-color:var(--red);color:var(--red);}
-.ibtn.del:disabled,.ibtn:disabled{opacity:.4;cursor:not-allowed;}
-.ibtn svg{width:11px;height:11px;}
-
-/* ── TABLE ── */
-.tbl-wrap{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;font-size:13px;}
-thead th{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding:9px 11px;text-align:left;border-bottom:1px solid var(--bdr);white-space:nowrap;}
-tbody tr{border-bottom:1px solid var(--bdr);transition:background .1s;}
-tbody tr:hover{background:var(--bg3);}
-tbody td{padding:9px 11px;vertical-align:middle;}
-.tbl-name{font-family:var(--serif);font-size:13.5px;font-weight:700;}
-.tbl-uni{font-size:11.5px;color:var(--dim2);}
-.tbl-note{font-size:11.5px;color:var(--dim2);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.tbl-acts{display:flex;gap:4px;}
-
-/* ── MODAL ── */
-.ov{position:fixed;inset:0;background:rgba(5,12,22,.88);z-index:200;display:none;align-items:center;justify-content:center;padding:14px;}
-.ov.on{display:flex;}
-.mform{background:var(--bg2);border:1px solid var(--bdr2);border-radius:10px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;display:flex;flex-direction:column;}
-.mfhdr{padding:18px 22px 14px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:2;}
-.mftitle{font-family:var(--serif);font-size:19px;font-weight:700;}
-.mclose{background:none;border:none;color:var(--dim);font-size:22px;cursor:pointer;line-height:1;padding:4px;}
-.mclose:hover{color:var(--txt);}
-.mfbody{padding:18px 22px;display:flex;flex-direction:column;gap:16px;}
-.mffooter{padding:12px 22px;border-top:1px solid var(--bdr);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:var(--bg2);z-index:2;}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.fld{display:flex;flex-direction:column;gap:5px;}
-.fld.full{grid-column:1/-1;}
-.fld label{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim2);}
-.fld label .req{color:var(--gold);}
-.fld input,.fld select,.fld textarea{background:var(--bg3);color:var(--txt);border:1px solid var(--bdr);border-radius:5px;padding:8px 11px;font-family:var(--sans);font-size:13px;width:100%;}
-.fld input:focus,.fld select:focus,.fld textarea:focus{outline:1px solid var(--gold);border-color:var(--gold);}
-.fld textarea{resize:vertical;min-height:76px;line-height:1.5;}
-.fld .hint{font-size:11px;color:var(--dim);}
-.fsec{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--bdr);padding-bottom:5px;}
-.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-
-/* ── CONFIRM ── */
-.mconfirm{background:var(--bg2);border:1px solid var(--bdr2);border-radius:10px;width:100%;max-width:380px;padding:26px;display:flex;flex-direction:column;gap:14px;}
-.mconfirm h3{font-family:var(--serif);font-size:17px;}
-.mconfirm p{font-size:13px;color:var(--dim2);line-height:1.6;}
-.mconfirm-acts{display:flex;justify-content:flex-end;gap:8px;}
-.btn-danger{background:var(--red);color:#fff;border:none;border-radius:var(--r);padding:8px 14px;font-family:var(--mono);font-size:11px;cursor:pointer;}
-.btn-danger:hover{background:#e74c3c;}
-
-/* ── DETAIL ── */
-.mdetail{background:var(--bg2);border:1px solid var(--bdr2);border-radius:10px;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;}
-.dthdr{padding:18px 22px 14px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
-.dtname{font-family:var(--serif);font-size:20px;font-weight:700;line-height:1.3;}
-.dtbody{padding:18px 22px;display:flex;flex-direction:column;gap:13px;}
-.drow{display:flex;gap:10px;}
-.dlbl{font-family:var(--mono);font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);min-width:88px;flex-shrink:0;padding-top:2px;}
-.dval{font-size:13px;color:var(--txt);line-height:1.55;word-break:break-word;}
-.dval a{color:var(--sky);text-decoration:none;}
-.dval a:hover{text-decoration:underline;}
-.dval.none{color:var(--dim);font-style:italic;}
-.dchips{display:flex;flex-wrap:wrap;gap:5px;}
-.dtfoot{padding:12px 22px;border-top:1px solid var(--bdr);display:flex;gap:8px;justify-content:flex-end;}
-.pbtn{color:var(--sky);border:1px solid var(--sky);border-radius:4px;padding:6px 12px;font-size:11px;font-family:var(--mono);text-decoration:none;}
-.pbtn:hover{background:var(--sky);color:var(--bg);}
-
-/* ── SPINNER ── */
-.spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:currentColor;border-radius:50%;animation:spin .6s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── TOAST ── */
-.toasts{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;flex-direction:column;gap:7px;}
-.toast{background:var(--bg3);border:1px solid var(--bdr2);border-radius:6px;padding:11px 15px;font-size:13px;color:var(--txt);animation:tIn .22s ease;min-width:210px;max-width:300px;}
-.toast.success{border-left:3px solid var(--green);}
-.toast.error{border-left:3px solid var(--red);}
-.toast.info{border-left:3px solid var(--sky);}
-@keyframes tIn{from{transform:translateX(30px);opacity:0}to{transform:translateX(0);opacity:1}}
-@keyframes tOut{from{transform:translateX(0);opacity:1}to{transform:translateX(30px);opacity:0}}
-.toast.out{animation:tOut .22s ease forwards;}
-
-/* ── RESPONSIVE ── */
-@media(max-width:580px){
-  .topbar{padding:10px 14px;}
-  .controls{padding:10px 14px;top:53px;}
-  .main{padding:14px 14px 80px;}
-  .frow,.sgrid{grid-template-columns:1fr;}
-  .grid{grid-template-columns:1fr;}
-  .logo-sub{display:none;}
-}
+.hidden-file-input { display: none; }
 </style>
 </head>
 <body>
 
-<!-- ── LOCK SCREEN ── -->
 <div id="lockScreen">
-  <div class="lock-box">
-    <div class="lock-logo">MS</div>
-    <h2>Application Tracker</h2>
-    <p>Muhammad Shah — MS Fall 2027<br>Enter your access password to continue.</p>
+  <div class="lock-card">
+    <div class="lock-avatar">MS</div>
+    <h2>Application Hub</h2>
+    <p>Muhammad Shah — Graduate Intake Systems<br>Verify credentials to request database connection.</p>
     <input type="password" id="lockInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')unlock()">
-    <button onclick="unlock()">Unlock →</button>
+    <button onclick="unlock()">Authenticate →</button>
     <div class="lock-err" id="lockErr"></div>
   </div>
 </div>
 
-<!-- ── TOPBAR ── -->
-<div class="topbar">
-  <div class="logo">
-    <div class="logo-icon">MS</div>
-    <div>
-      <div class="logo-text">Application Tracker</div>
-      <div class="logo-sub">Muhammad Shah — AI × Blockchain × Cyber</div>
+<div class="dashboard-header">
+  <div class="brand-group">
+    <div class="brand-logo">MS</div>
+    <div class="brand-title">
+      <h1>Application Tracker Matrix</h1>
+      <p>System State: Fall 2027 Admission Nodes</p>
     </div>
   </div>
-  <div class="topbar-r">
-    <span class="sync-status loading" id="syncStatus">⟳ Connecting…</span>
-    <button class="btn-ghost" onclick="loadEntries()">↺ Refresh</button>
-    <button class="btn-primary" onclick="openForm()">+ Add Entry</button>
+  <div class="nav-actions">
+    <span class="status-badge loading" id="syncStatus">Connecting Infrastructure...</span>
+    <button class="btn btn-secondary" onclick="loadEntries()">Refresh Matrix</button>
+    <button class="btn btn-primary" onclick="openForm()">+ Add Node Manually</button>
   </div>
 </div>
 
-<!-- ── STAT STRIP ── -->
-<div class="stat-strip" id="statStrip">
-  <div class="stat s-total" data-filter=""><div class="stat-num" id="st-t">0</div><div class="stat-lbl">Total</div></div>
-  <div class="stat s-na"    data-filter="Not Applied"><div class="stat-num" id="st-na">0</div><div class="stat-lbl">Not Applied</div></div>
-  <div class="stat s-ap"    data-filter="Applied"><div class="stat-num" id="st-ap">0</div><div class="stat-lbl">Applied</div></div>
-  <div class="stat s-wr"    data-filter="Waiting for Response"><div class="stat-num" id="st-wr">0</div><div class="stat-lbl">Waiting</div></div>
-  <div class="stat s-in"    data-filter="Interview"><div class="stat-num" id="st-in">0</div><div class="stat-lbl">Interview</div></div>
-  <div class="stat s-of"    data-filter="Offer Received"><div class="stat-num" id="st-of">0</div><div class="stat-lbl">Offer</div></div>
-  <div class="stat s-re"    data-filter="Rejected"><div class="stat-num" id="st-re">0</div><div class="stat-lbl">Rejected</div></div>
-  <div class="stat s-sc"    data-filter="Scholarship"><div class="stat-num" id="st-sc">0</div><div class="stat-lbl">Scholarship</div></div>
+<div class="hero-analytics">
+  <div class="progress-card">
+    <div class="progress-info">
+      <h3>Submission Density</h3>
+      <div class="percentage" id="metricsPercentage">0%</div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="metricsBar"></div>
+    </div>
+    <div class="progress-meta">
+      <span id="metricsRatio">0 / 0 Active Submissions</span>
+      <span>Target Rate</span>
+    </div>
+  </div>
+
+  <div class="stats-grid" id="statStrip">
+    <div class="stat-box s-total active-filter" data-filter="">
+      <div class="count" id="st-t">0</div>
+      <div class="label">Total Scope</div>
+    </div>
+    <div class="stat-box s-ap" data-filter="Applied">
+      <div class="count" id="st-ap">0</div>
+      <div class="label">Transmitted</div>
+    </div>
+    <div class="stat-box s-wr" data-filter="Waiting for Response">
+      <div class="count" id="st-wr">0</div>
+      <div class="label">Pending Review</div>
+    </div>
+    <div class="stat-box s-in" data-filter="Interview">
+      <div class="count" id="st-in">0</div>
+      <div class="label">Interviews</div>
+    </div>
+    <div class="stat-box s-of" data-filter="Offer Received">
+      <div class="count" id="st-of">0</div>
+      <div class="label">Offers</div>
+    </div>
+    <div class="stat-box s-re" data-filter="Rejected">
+      <div class="count" id="st-re">0</div>
+      <div class="label">Declined</div>
+    </div>
+    <div class="stat-box s-sc" data-filter="Scholarship">
+      <div class="count" id="st-sc">0</div>
+      <div class="label">Scholarships</div>
+    </div>
+    <div class="stat-box s-total" style="background:rgba(255,255,255,0.01)" data-filter="Not Applied">
+      <div class="count" id="st-na">0</div>
+      <div class="label">Drafts</div>
+    </div>
+  </div>
 </div>
 
-<!-- ── CONTROLS ── -->
-<div class="controls">
-  <div class="search-wrap">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input class="sinp" id="searchInp" type="text" placeholder="Search professor, university, keyword…" oninput="renderAll()">
+<div class="filter-bar">
+  <div class="search-container">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input id="searchInp" type="text" placeholder="Filter vectors via naming, parameters, keywords..." oninput="renderAll()">
   </div>
-  <select class="ctrl" id="fCountry" onchange="renderAll()">
-    <option value="">All Countries</option>
+
+  <select class="select-input" id="fCountry" onchange="renderAll()">
+    <option value="">All Regions</option>
     <option>Canada</option><option>USA</option><option>Other</option>
   </select>
-  <select class="ctrl" id="fStatus" onchange="renderAll()">
-    <option value="">All Statuses</option>
-    <option>Not Applied</option><option>Applied</option>
-    <option>Waiting for Response</option><option>Interview</option>
-    <option>Offer Received</option><option>Rejected</option><option>Scholarship</option>
-  </select>
-  <select class="ctrl" id="fType" onchange="renderAll()">
-    <option value="">All Types</option>
+  <select class="select-input" id="fType" onchange="renderAll()">
+    <option value="">All Vectors</option>
     <option>Professor</option><option>University Program</option><option>Scholarship</option>
   </select>
-  <select class="ctrl" id="fFunding" onchange="renderAll()">
-    <option value="">All Funding</option>
-    <option>Fully Funded</option><option>RA Likely</option>
-    <option>TA Available</option><option>Scholarship Pool</option><option>Ask Directly</option>
+  <select class="select-input" id="fFunding" onchange="renderAll()">
+    <option value="">All Fiscal Contexts</option>
+    <option>Fully Funded</option><option>RA Likely</option><option>TA Available</option><option>Scholarship Pool</option><option>Ask Directly</option>
   </select>
-  <div class="vbtns">
-    <button class="vbtn active" id="btnGrid" onclick="setView('grid')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>
-    </button>
-    <button class="vbtn" id="btnTable" onclick="setView('table')">
-      <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="5" width="18" height="2"/><rect x="3" y="11" width="18" height="2"/><rect x="3" y="17" width="18" height="2"/></svg>
-    </button>
+  <select class="select-input" id="sortField" onchange="renderAll()">
+    <option value="created">Sort: Date Logged</option>
+    <option value="deadline">Sort: Target Deadline</option>
+    <option value="name">Sort: Alphabetical</option>
+  </select>
+  <select class="select-input" id="viewMode" onchange="toggleViewMode(this.value)">
+    <option value="grid">View Grid Cards</option>
+    <option value="table">View Compact Table</option>
+  </select>
+
+  <button class="btn btn-secondary" onclick="triggerExcelImport()">⚡ Import Sheet</button>
+  <button class="btn btn-secondary" onclick="exportToExcel()">⤓ Export Excel</button>
+  <button class="btn btn-secondary" style="opacity:0.6; font-size:11px" onclick="downloadTemplate()">Get Template</button>
+  <input type="file" id="excelFileInput" class="hidden-file-input" accept=".xlsx, .xls, .csv" onchange="handleExcelFile(event)">
+</div>
+
+<div id="bulkBar">
+  <div class="bulk-info" id="bulkCountText">0 items flagged for transaction</div>
+  <div class="bulk-controls">
+    <select class="select-input" id="bulkStatusAction" onchange="executeBulkStatusUpdate(this.value)">
+      <option value="">Batch Status Adjust...</option>
+      <option>Not Applied</option><option>Applied</option><option>Waiting for Response</option><option>Interview</option><option>Offer Received</option><option>Rejected</option><option>Scholarship</option>
+    </select>
+    <button class="btn btn-danger" onclick="executeBulkDelete()">Purge Selection</button>
+    <button class="btn btn-secondary" onclick="clearSelectionSet()">Clear Selection</button>
   </div>
 </div>
 
-<!-- ── MAIN ── -->
-<div class="main" id="mainArea"></div>
-<div class="toasts" id="toasts"></div>
-
-<!-- ── FORM MODAL ── -->
-<div class="ov" id="ovForm">
-<div class="mform">
-  <div class="mfhdr">
-    <div class="mftitle" id="formTitle">Add New Entry</div>
-    <button class="mclose" onclick="closeForm()">×</button>
-  </div>
-  <div class="mfbody">
-    <div class="fsec">Basic Information</div>
-    <div class="frow">
-      <div class="fld"><label>Entry Type <span class="req">*</span></label>
-        <select id="fType"><option>Professor</option><option>University Program</option><option>Scholarship</option></select></div>
-      <div class="fld"><label>Country <span class="req">*</span></label>
-        <select id="fCountryF"><option>Canada</option><option>USA</option><option>Other</option></select></div>
-    </div>
-    <div class="fld full"><label>Name <span class="req">*</span></label>
-      <input id="fName" type="text" placeholder="Prof. Jeremy Clark / MS Cybersecurity / NSERC CGS-M"></div>
-    <div class="fld full"><label>University / Institution <span class="req">*</span></label>
-      <input id="fUni" type="text" placeholder="e.g. Concordia University (CIISE)"></div>
-    <div class="frow">
-      <div class="fld"><label>Department / Lab</label>
-        <input id="fDept" type="text" placeholder="e.g. CIISE / CrySP / ECE"></div>
-      <div class="fld"><label>Degree Level</label>
-        <select id="fDegree"><option>MS</option><option>MS/PhD</option><option>PhD</option><option>Fellowship</option></select></div>
-    </div>
-
-    <div class="fsec">Research & Funding</div>
-    <div class="fld full"><label>Research Areas (comma-separated)</label>
-      <input id="fAreas" type="text" placeholder="Blockchain, AI Security, Federated Learning, Cryptography">
-      <div class="hint">These appear as color-coded chips on the card</div></div>
-    <div class="frow">
-      <div class="fld"><label>Funding Status</label>
-        <select id="fFundingF">
-          <option>Fully Funded</option><option>RA Likely</option><option>TA Available</option>
-          <option>Scholarship Pool</option><option>Ask Directly</option><option>Unknown</option>
-        </select></div>
-      <div class="fld"><label>Best Fit ★ for Profile?</label>
-        <select id="fFit"><option value="no">No</option><option value="yes">Yes ★</option></select></div>
-    </div>
-
-    <div class="fsec">Status & Timeline</div>
-    <div class="frow">
-      <div class="fld"><label>Application Status <span class="req">*</span></label>
-        <select id="fStatus2">
-          <option>Not Applied</option><option>Applied</option>
-          <option>Waiting for Response</option><option>Interview</option>
-          <option>Offer Received</option><option>Rejected</option><option>Scholarship</option>
-        </select></div>
-      <div class="fld"><label>Deadline / Target Date</label>
-        <input id="fDeadline" type="date"></div>
-    </div>
-    <div class="fld full"><label>Response / Latest Update</label>
-      <input id="fResponse" type="text" placeholder="e.g. Auto-reply 12 Jun 2026 / Interview scheduled Tue 2pm"></div>
-
-    <div class="fsec">Contact Information</div>
-    <div class="frow">
-      <div class="fld"><label>Email Address</label>
-        <input id="fEmail" type="email" placeholder="professor@university.edu"></div>
-      <div class="fld"><label>Phone / Office</label>
-        <input id="fPhone" type="text" placeholder="+1-514-848-2424 ext.5381"></div>
-    </div>
-    <div class="fld full"><label>Faculty Profile / Lab Website</label>
-      <input id="fWeb" type="url" placeholder="https://lab.university.edu/~professor"></div>
-    <div class="fld full"><label>Application Portal URL</label>
-      <input id="fPortal" type="url" placeholder="https://graduate.university.edu/apply"></div>
-
-    <div class="fsec">Social & Online Handles</div>
-    <div class="sgrid">
-      <div class="fld"><label>Google Scholar</label>
-        <input id="fScholar" type="url" placeholder="https://scholar.google.com/citations?user=…"></div>
-      <div class="fld"><label>LinkedIn</label>
-        <input id="fLinkedIn" type="url" placeholder="https://linkedin.com/in/…"></div>
-      <div class="fld"><label>Twitter / X</label>
-        <input id="fTwitter" type="text" placeholder="@username or full URL"></div>
-      <div class="fld"><label>ResearchGate / ORCID</label>
-        <input id="fRG" type="url" placeholder="https://researchgate.net/profile/…"></div>
-    </div>
-
-    <div class="fsec">Notes</div>
-    <div class="fld full"><label>Research Notes / Why Interested</label>
-      <textarea id="fNote" placeholder="Why this fits your AffidBlock + Mitacs AI background. Papers to read. What to mention in email."></textarea></div>
-    <div class="fld full"><label>Email Draft / Talking Points</label>
-      <textarea id="fEmailDraft" placeholder="Paste your drafted outreach email or key bullet points here."></textarea></div>
-    <div class="frow">
-      <div class="fld"><label>Custom Field Label</label>
-        <input id="fCLabel" type="text" placeholder="e.g. Stipend Amount / Interview Date"></div>
-      <div class="fld"><label>Custom Field Value</label>
-        <input id="fCValue" type="text" placeholder="e.g. CAD $20,000/yr / 15 Jul 2026"></div>
-    </div>
-  </div>
-  <div class="mffooter">
-    <button class="btn-ghost" onclick="closeForm()">Cancel</button>
-    <button class="btn-primary" id="submitBtn" onclick="submitForm()">Save Entry</button>
-  </div>
-</div>
+<div class="app-container">
+  <div id="primaryViewport"></div>
 </div>
 
-<!-- ── CONFIRM DELETE ── -->
-<div class="ov" id="ovConfirm">
-<div class="mconfirm">
-  <h3>Delete Entry</h3>
-  <p>This will permanently delete the entry from the database. This cannot be undone.</p>
-  <div class="mconfirm-acts">
-    <button class="btn-ghost" onclick="closeConfirm()">Cancel</button>
-    <button class="btn-danger" id="confirmDelBtn" onclick="confirmDelete()">Delete</button>
+<div class="toast-container" id="toastBox"></div>
+
+<div class="modal-overlay" id="ovForm">
+  <div class="modal-window">
+    <div class="modal-header">
+      <h2 id="formTitle">Instantiate New Node</h2>
+      <button class="modal-close" onclick="closeForm()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="section-divider">Primary Dimensions</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Vector Classification *</label>
+          <select id="fTypeField"><option>Professor</option><option>University Program</option><option>Scholarship</option></select>
+        </div>
+        <div class="form-group">
+          <label>Regional Jurisdiction *</label>
+          <select id="fCountryField"><option>Canada</option><option>USA</option><option>Other</option></select>
+        </div>
+        <div class="form-group colspan-2">
+          <label>Identifier Naming Core *</label>
+          <input id="fName" type="text" placeholder="e.g., Prof. Jeremy Clark / MS Cybersecurity">
+        </div>
+        <div class="form-group colspan-2">
+          <label>Target Institution Matrix *</label>
+          <input id="fUni" type="text" placeholder="e.g., Concordia University (CIISE)">
+        </div>
+        <div class="form-group">
+          <label>Department / Core Laboratory</label>
+          <input id="fDept" type="text" placeholder="e.g., CIISE / CrySP Lab">
+        </div>
+        <div class="form-group">
+          <label>Degree Framework</label>
+          <select id="fDegree"><option>MS</option><option>MS/PhD</option><option>PhD</option><option>Fellowship</option></select>
+        </div>
+      </div>
+
+      <div class="section-divider">Fulfillment Parameters</div>
+      <div class="form-grid">
+        <div class="form-group colspan-2">
+          <label>Research Vectors (Comma Separated Arrays)</label>
+          <input id="fAreas" type="text" placeholder="Blockchain, AI Security, Cryptography">
+        </div>
+        <div class="form-group">
+          <label>Fiscal Allocation Status</label>
+          <select id="fFundingField">
+            <option>Fully Funded</option><option>RA Likely</option><option>TA Available</option><option>Scholarship Pool</option><option>Ask Directly</option><option>Unknown</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Strategic Priority Mapping</label>
+          <select id="fFit"><option value="no">Standard Pipeline</option><option value="yes">High Priority Target ★</option></select>
+        </div>
+      </div>
+
+      <div class="section-divider">Pipeline State & Timelines</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Pipeline Stage Placement</label>
+          <select id="fStatus2">
+            <option>Not Applied</option><option>Applied</option><option>Waiting for Response</option><option>Interview</option><option>Offer Received</option><option>Rejected</option><option>Scholarship</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Target Submission Cutoff</label>
+          <input id="fDeadline" type="date">
+        </div>
+        <div class="form-group colspan-2">
+          <label>Pipeline Response Registry</label>
+          <input id="fResponse" type="text" placeholder="e.g., Interview scheduled for July 15">
+        </div>
+      </div>
+
+      <div class="section-divider">Telemetry Channels</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Digital Mail Relay</label><input id="fEmail" type="email" placeholder="prof@uni.edu"></div>
+        <div class="form-group"><label>Telephonic Link</label><input id="fPhone" type="text" placeholder="Office extension digits"></div>
+        <div class="form-group colspan-2"><label>Faculty Directory Index URL</label><input id="fWeb" type="url" placeholder="https://..."></div>
+        <div class="form-group colspan-2"><label>Application Processing Hub URL</label><input id="fPortal" type="url" placeholder="https://..."></div>
+      </div>
+
+      <div class="section-divider">Extended Data Profiles</div>
+      <div class="form-grid">
+        <div class="form-group"><label>Google Scholar Identity</label><input id="fScholar" type="url"></div>
+        <div class="form-group"><label>LinkedIn Vector Link</label><input id="fLinkedIn" type="url"></div>
+        <div class="form-group"><label>X Handle Identifier</label><input id="fTwitter" type="text"></div>
+        <div class="form-group"><label>ResearchGate Index</label><input id="fRG" type="url"></div>
+      </div>
+
+      <div class="section-divider">Unstructured Storage Blocks</div>
+      <div class="form-group">
+        <label>Strategic Analysis Notes</label>
+        <textarea id="fNote" placeholder="Synthesize profile alignment parameters here..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Communication Payload Template / Draft</label>
+        <textarea id="fEmailDraft" placeholder="Write or stage transmission payloads..."></textarea>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Variable Label Attribute</label><input id="fCLabel" type="text"></div>
+        <div class="form-group"><label>Variable Key Value</label><input id="fCValue" type="text"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeForm()">Abort</button>
+      <button class="btn btn-primary" id="submitBtn" onclick="submitForm()">Commit Entry</button>
+    </div>
   </div>
-</div>
 </div>
 
-<!-- ── DETAIL ── -->
-<div class="ov" id="ovDetail">
-<div class="mdetail">
-  <div class="dthdr">
-    <div>
-      <div class="dtname" id="dtName"></div>
-      <div style="font-size:12px;color:var(--dim2);margin-top:4px;" id="dtUni"></div>
+<div class="modal-overlay" id="ovDetail">
+  <div class="modal-window">
+    <div class="modal-header">
+      <div>
+        <h2 id="dtName" style="color:#fff"></h2>
+        <div id="dtUni" style="font-size:12px; color:var(--text-muted); margin-top:4px"></div>
+      </div>
+      <button class="modal-close" onclick="closeDetail()">×</button>
     </div>
-    <button class="mclose" onclick="closeDetail()">×</button>
+    <div class="modal-body" id="dtBody"></div>
+    <div class="modal-footer" id="dtFoot"></div>
   </div>
-  <div class="dtbody" id="dtBody"></div>
-  <div class="dtfoot" id="dtFoot"></div>
 </div>
+
+<div class="modal-overlay" id="ovConfirm">
+  <div class="modal-window" style="max-width: 400px">
+    <div class="modal-header"><h2>Destructive Confirmation</h2></div>
+    <div class="modal-body"><p style="color:var(--text-muted)">This routine permanently excises the designated vector index from the database. Reversal is functionally impossible.</p></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" id="confirmDelBtn" onclick="confirmDelete()">Execute Purge</button>
+    </div>
+  </div>
 </div>
 
 <script>
-// ════════════════════════════════════════════
-// CONFIG — set your Vercel URL + secret here
-// ════════════════════════════════════════════
 const CONFIG = {
-  // After deploying to Vercel, paste your deployment URL here:
-  // e.g. "https://ms-tracker-xyz.vercel.app"
   apiBase: window.location.origin,
-  // This MUST match the API_SECRET env var you set in Vercel
-  // Change this to something secret before deploying:
   secret: localStorage.getItem('ms_tracker_secret') || ''
 };
 
-// ── STATE ──
 let entries = [];
-let editId  = null;
+let selectedIds = new Set();
+let editId = null;
 let deleteId = null;
-let currentView = 'grid';
-let statFilter = '';
+let activeStatFilter = '';
+let viewPreference = 'grid';
 
-// ── LOCK SCREEN ──
 function unlock() {
   const val = document.getElementById('lockInput').value.trim();
-  if (!val) { document.getElementById('lockErr').textContent = 'Enter your password'; return; }
-  // Store secret for API calls
+  if(!val) return;
   localStorage.setItem('ms_tracker_secret', val);
   CONFIG.secret = val;
   document.getElementById('lockScreen').style.display = 'none';
   loadEntries();
 }
 
-// Check if already have a stored secret
 window.addEventListener('DOMContentLoaded', () => {
-  const stored = localStorage.getItem('ms_tracker_secret');
-  if (stored) {
-    CONFIG.secret = stored;
+  if (CONFIG.secret) {
     document.getElementById('lockScreen').style.display = 'none';
     loadEntries();
   }
+  setupFilterStripEvents();
 });
 
-// ── API CALLS ──
-async function api(method, path, body) {
-  const opts = {
+async function apiCall(method, route, data) {
+  const settings = {
     method,
     headers: { 'Content-Type': 'application/json', 'x-api-secret': CONFIG.secret }
   };
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(CONFIG.apiBase + '/api/' + path, opts);
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
-  return data;
+  if(data) settings.body = JSON.stringify(data);
+  const response = await fetch(`${CONFIG.apiBase}/api/${route}`, settings);
+  const feedback = await response.json();
+  if(!response.ok) throw new Error(feedback.error || `Error state code: ${response.status}`);
+  return feedback;
 }
 
 async function loadEntries() {
-  setSyncStatus('loading', '⟳ Syncing…');
+  updateSyncMarkup('loading', 'Syncing Cluster Array...');
   try {
-    entries = await api('GET', 'entries');
-    setSyncStatus('ok', '✓ Synced');
+    entries = await apiCall('GET', 'entries');
+    updateSyncMarkup('ok', 'Nodes Operational');
     renderAll();
-  } catch (e) {
-    setSyncStatus('err', '✗ Offline');
-    toast('Could not reach server: ' + e.message, 'error');
-    // fallback: try localStorage cache
-    try {
-      const cached = localStorage.getItem('ms_entries_cache');
-      if (cached) { entries = JSON.parse(cached); renderAll(); toast('Showing cached data', 'info'); }
-    } catch(_) {}
+  } catch(e) {
+    updateSyncMarkup('err', 'Array Localised');
+    triggerToast('Remote sync interrupted. Serving local snapshot.', 'error');
+    const locallyStored = localStorage.getItem('ms_entries_cache');
+    if(locallyStored) { entries = JSON.parse(locallyStored); renderAll(); }
   }
 }
 
-// Cache locally after every successful load
-function cacheEntries() { try { localStorage.setItem('ms_entries_cache', JSON.stringify(entries)); } catch(_) {} }
-
-function setSyncStatus(type, text) {
-  const el = document.getElementById('syncStatus');
-  el.className = 'sync-status ' + type;
-  el.textContent = text;
+function updateSyncMarkup(state, label) {
+  const badge = document.getElementById('syncStatus');
+  badge.className = `status-badge ${state}`;
+  badge.textContent = label;
 }
 
-// ── STATUS HELPERS ──
-const SC = {'Not Applied':'sp-na','Applied':'sp-ap','Waiting for Response':'sp-wr','Interview':'sp-in','Offer Received':'sp-of','Rejected':'sp-re','Scholarship':'sp-sc'};
-const FC = {'Fully Funded':'var(--gold)','RA Likely':'var(--teal)','TA Available':'var(--sage)','Scholarship Pool':'var(--coral)','Ask Directly':'var(--slate)','Unknown':'var(--dim)'};
-const DM = {};
-const DP = ['var(--teal)','var(--coral)','var(--gold)','var(--sage)','var(--lav)','var(--sky)','var(--amber)','var(--pink)'];
-let dpi = 0;
-function dc(t) { const k=t.trim().toLowerCase(); if(!DM[k]){DM[k]=DP[dpi%DP.length];dpi++;} return DM[k]; }
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
-
-// ── STATS STRIP ──
-document.querySelectorAll('.stat').forEach(s => {
-  s.addEventListener('click', () => {
-    const f = s.dataset.filter;
-    if (statFilter === f) { statFilter = ''; s.classList.remove('active-filter'); }
-    else {
-      document.querySelectorAll('.stat').forEach(x=>x.classList.remove('active-filter'));
-      statFilter = f;
-      s.classList.add('active-filter');
-      document.getElementById('fStatus').value = f;
-    }
-    renderAll();
+function setupFilterStripEvents() {
+  document.querySelectorAll('.stat-box').forEach(box => {
+    box.addEventListener('click', () => {
+      document.querySelectorAll('.stat-box').forEach(b => b.classList.remove('active-filter'));
+      const targetFilter = box.dataset.filter;
+      if (activeStatFilter === targetFilter) {
+        activeStatFilter = '';
+        document.querySelector('.stat-box.s-total').classList.add('active-filter');
+      } else {
+        activeStatFilter = targetFilter;
+        box.classList.add('active-filter');
+      }
+      renderAll();
+    });
   });
-});
+}
 
-// ── RENDER ──
 function renderAll() {
-  // update stats
-  const ids = { t:entries.length, na:0, ap:0, wr:0, iv:0, of:0, re:0, sc:0 };
-  entries.forEach(e=>{
-    if(e.status==='Not Applied') ids.na++;
-    else if(e.status==='Applied') ids.ap++;
-    else if(e.status==='Waiting for Response') ids.wr++;
-    else if(e.status==='Interview') ids.iv++;
-    else if(e.status==='Offer Received') ids.of++;
-    else if(e.status==='Rejected') ids.re++;
-    else if(e.status==='Scholarship') ids.sc++;
+  const metrics = { total: entries.length, na:0, ap:0, wr:0, iv:0, of:0, re:0, sc:0 };
+  entries.forEach(item => {
+    if(item.status === 'Not Applied') metrics.na++;
+    else if(item.status === 'Applied') metrics.ap++;
+    else if(item.status === 'Waiting for Response') metrics.wr++;
+    else if(item.status === 'Interview') metrics.iv++;
+    else if(item.status === 'Offer Received') metrics.of++;
+    else if(item.status === 'Rejected') metrics.re++;
+    else if(item.status === 'Scholarship') metrics.sc++;
   });
-  document.getElementById('st-t').textContent=ids.t;
-  document.getElementById('st-na').textContent=ids.na;
-  document.getElementById('st-ap').textContent=ids.ap;
-  document.getElementById('st-wr').textContent=ids.wr;
-  document.getElementById('st-in').textContent=ids.iv;
-  document.getElementById('st-of').textContent=ids.of;
-  document.getElementById('st-re').textContent=ids.re;
-  document.getElementById('st-sc').textContent=ids.sc;
 
-  const q  = document.getElementById('searchInp').value.toLowerCase();
-  const fc = document.getElementById('fCountry').value;
-  const fs = document.getElementById('fStatus').value || statFilter;
-  const ft = document.getElementById('fType').value;
-  const ff = document.getElementById('fFunding').value;
+  document.getElementById('st-t').textContent = metrics.total;
+  document.getElementById('st-na').textContent = metrics.na;
+  document.getElementById('st-ap').textContent = metrics.ap;
+  document.getElementById('st-wr').textContent = metrics.wr;
+  document.getElementById('st-in').textContent = metrics.iv;
+  document.getElementById('st-of').textContent = metrics.of;
+  document.getElementById('st-re').textContent = metrics.re;
+  document.getElementById('st-sc').textContent = metrics.sc;
 
-  const res = entries.filter(e => {
-    if (fc && e.country !== fc) return false;
-    if (fs && e.status  !== fs) return false;
-    if (ft && e.type    !== ft) return false;
-    if (ff && e.funding !== ff) return false;
-    if (q) { const h=[e.name,e.uni,e.dept,e.areas,e.note,e.country,e.type].join(' ').toLowerCase(); if(!h.includes(q)) return false; }
+  // Render Core Processing Bars
+  const evaluatedSubmissions = metrics.total - metrics.na;
+  const evaluationRatio = metrics.total > 0 ? Math.round((evaluatedSubmissions / metrics.total) * 100) : 0;
+  document.getElementById('metricsPercentage').textContent = `${evaluationRatio}%`;
+  document.getElementById('metricsBar').style.width = `${evaluationRatio}%`;
+  document.getElementById('metricsRatio').textContent = `${evaluatedSubmissions} transmitted / ${metrics.total} scoped profiles`;
+
+  // Apply Search + Filter Systems
+  const query = document.getElementById('searchInp').value.toLowerCase();
+  const filterCountry = document.getElementById('fCountry').value;
+  const filterType = document.getElementById('fType').value;
+  const filterFunding = document.getElementById('fFunding').value;
+  const orderingField = document.getElementById('sortField').value;
+
+  let subset = entries.filter(node => {
+    if(activeStatFilter && node.status !== activeStatFilter) return false;
+    if(filterCountry && node.country !== filterCountry) return false;
+    if(filterType && node.type !== filterType) return false;
+    if(filterFunding && node.funding !== filterFunding) return false;
+    if(query) {
+      const consolidatedBlock = [node.name, node.uni, node.dept, node.areas, node.note].join(' ').toLowerCase();
+      if(!consolidatedBlock.includes(query)) return false;
+    }
     return true;
   });
 
-  const main = document.getElementById('mainArea');
+  // Apply Sorting Routines
+  subset.sort((alpha, beta) => {
+    if (orderingField === 'created') return beta.created - alpha.created;
+    if (orderingField === 'name') return alpha.name.localeCompare(beta.name);
+    if (orderingField === 'deadline') {
+      if (!alpha.deadline) return 1; if (!beta.deadline) return -1;
+      return new Date(alpha.deadline) - new Date(beta.deadline);
+    }
+    return 0;
+  });
 
-  if (!entries.length) {
-    main.innerHTML = `<div class="empty-state">
-      <div class="big">Your tracker is empty</div>
-      <p>Add professors, university programs, and scholarships. Your data is saved to the cloud — access it from any device.</p>
-      <button class="btn-primary" onclick="openForm()">+ Add First Entry</button>
-    </div>`; return;
-  }
-  if (!res.length) {
-    main.innerHTML = `<div class="empty-state"><div class="big">No matches</div><p>Try clearing a filter or changing your search.</p></div>`; return;
+  renderViewPresentation(subset);
+  localStorage.setItem('ms_entries_cache', JSON.stringify(entries));
+  evaluateBulkBarDock();
+}
+
+function renderViewPresentation(dataset) {
+  const targetLayoutContainer = document.getElementById('primaryViewport');
+  if(!dataset.length) {
+    targetLayoutContainer.innerHTML = `<div style="text-align:center; padding:80px var(--radius); color:var(--text-muted); border:1px dashed var(--border); border-radius:16px"><h3>No active context matched parameters</h3><p style="font-size:12px; margin-top:4px">Alter search patterns or load defaults</p></div>`;
+    return;
   }
 
-  if (currentView === 'grid') {
-    main.innerHTML = '<div class="grid" id="gridEl"></div>';
-    res.forEach(e => document.getElementById('gridEl').appendChild(mkCard(e)));
+  if(viewPreference === 'grid') {
+    const gridDiv = document.createElement('div');
+    gridDiv.className = 'cards-layout';
+    dataset.forEach(element => gridDiv.appendChild(buildModernCardComponent(element)));
+    targetLayoutContainer.innerHTML = '';
+    targetLayoutContainer.appendChild(gridDiv);
   } else {
-    main.innerHTML = `<div class="tbl-wrap"><table>
-      <thead><tr><th>Name</th><th>University</th><th>Country</th><th>Type</th><th>Funding</th><th>Status</th><th>Deadline</th><th>Note</th><th>Actions</th></tr></thead>
-      <tbody id="tblBody"></tbody></table></div>`;
-    res.forEach(e => document.getElementById('tblBody').appendChild(mkRow(e)));
+    const rootTableCard = document.createElement('div');
+    rootTableCard.className = 'table-view-card';
+    rootTableCard.innerHTML = `
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:40px">Sel</th>
+              <th>Identity Node</th><th>Institution</th><th>Region</th><th>Funding Matrix</th><th>Stage</th><th>Target Cutoff</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tabularInjectTarget"></tbody>
+        </table>
+      </div>`;
+    targetLayoutContainer.innerHTML = '';
+    targetLayoutContainer.appendChild(rootTableCard);
+    const tbody = document.getElementById('tabularInjectTarget');
+    dataset.forEach(elem => tbody.appendChild(buildTableDataRow(elem)));
   }
-  cacheEntries();
 }
 
-function mkChips(e) {
-  return (e.areas||'').split(',').map(a=>a.trim()).filter(Boolean)
-    .map(a=>`<span class="chip"><span class="cdot" style="background:${dc(a)}"></span>${esc(a)}</span>`).join('');
-}
+function buildModernCardComponent(item) {
+  const card = document.createElement('div');
+  const checkedMarkup = selectedIds.has(item.id) ? 'checked' : '';
+  const adaptiveClass = selectedIds.has(item.id) ? 'modern-card selectable selected' : 'modern-card';
+  
+  card.className = adaptiveClass;
+  if(selectedIds.size > 0) card.classList.add('selectable');
 
-function mkCard(e) {
-  const div = document.createElement('div');
-  div.className = 'card'; div.dataset.s = e.status;
-  div.innerHTML = `
-    <div class="card-hdr">
-      <div class="card-name">${esc(e.name)}${e.fit==='yes'?'<span class="fit-star">★</span>':''}</div>
-      <span class="spill ${SC[e.status]||'sp-na'}">${e.status}</span>
-    </div>
-    <div class="card-uni">${esc(e.uni)}${e.dept?` <span style="color:var(--dim)">/ ${esc(e.dept)}</span>`:''}
-      <span class="ctag">${e.country}</span></div>
-    ${mkChips(e)?`<div class="chips">${mkChips(e)}</div>`:''}
-    ${e.funding&&e.funding!=='Unknown'?`<div style="font-family:var(--mono);font-size:10px;color:${FC[e.funding]||'var(--dim)'}">⬤ ${esc(e.funding)}</div>`:''}
-    ${e.note?`<div class="card-note">${esc(e.note)}</div>`:''}
-    <div class="card-meta">
-      ${e.email?`<a href="mailto:${esc(e.email)}">${esc(e.email)}</a>`:''}
-      ${e.web?`<a href="${esc(e.web)}" target="_blank" rel="noopener">Profile ↗</a>`:''}
-      ${e.portal?`<a href="${esc(e.portal)}" target="_blank" rel="noopener">Apply ↗</a>`:''}
-    </div>
-    ${e.deadline||e.response?`<div class="card-meta">
-      ${e.deadline?`<span>📅 ${esc(e.deadline)}</span>`:''}
-      ${e.response?`<span style="color:var(--amber)">💬 ${esc(e.response)}</span>`:''}
-    </div>`:''}
-    <div class="card-foot">
-      <span class="card-date">${new Date(e.created||Date.now()).toLocaleDateString('en-CA')}</span>
-      <div class="card-acts">
-        <button class="ibtn" onclick="openDetail('${e.id}')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View
-        </button>
-        <button class="ibtn" onclick="openForm('${e.id}')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit
-        </button>
-        <button class="ibtn del" onclick="askDelete('${e.id}')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-        </button>
+  // Activate context selection states upon double-clicking card canvas
+  card.addEventListener('dblclick', (e) => {
+    e.preventDefault();
+    toggleNodeSelection(item.id);
+  });
+
+  const stateClassMapping = { 'Not Applied':'p-na','Applied':'p-ap','Waiting for Response':'p-wr','Interview':'p-in','Offer Received':'p-of','Rejected':'p-re','Scholarship':'p-sc' };
+  const initials = item.uni ? item.uni.substring(0,2) : 'UN';
+
+  let researchChips = '';
+  if(item.areas) {
+    researchChips = item.areas.split(',').map(chip => `<span class="research-chip">${chip.trim()}</span>`).join('');
+  }
+
+  card.innerHTML = `
+    <input type="checkbox" class="card-checkbox" ${checkedMarkup} onclick="event.stopPropagation(); toggleNodeSelection('${item.id}')">
+    <div class="card-top">
+      <div class="avatar-wrapper">
+        <div class="uni-avatar">${initials}</div>
+        <div class="title-block">
+          <div class="profile-name">${escapeContent(item.name)} ${item.fit==='yes'?'<span class="star-indicator">★</span>':''}</div>
+          <div class="institution-text">${escapeContent(item.uni)}</div>
+        </div>
       </div>
-    </div>`;
-  return div;
+      <span class="status-pill ${stateClassMapping[item.status] || 'p-na'}">${item.status}</span>
+    </div>
+    <div class="tag-field">
+      <span class="meta-badge" style="color:#a78bfa">${item.type}</span>
+      <span class="meta-badge" style="color:#60a5fa">${item.country}</span>
+      <span class="meta-badge" style="color:#34d399">${item.degree}</span>
+    </div>
+    ${researchChips ? `<div class="tag-field">${researchChips}</div>` : ''}
+    <div class="card-body-note">${item.note ? escapeContent(item.note) : '<span style="color:rgba(255,255,255,0.15); font-style:italic">No descriptive logs documented</span>'}</div>
+    <div class="card-footer-metrics">
+      <span>Cutoff: ${item.deadline ? item.deadline : 'None'}</span>
+      <div class="card-actions-row">
+        <button class="action-icon-btn" onclick="openDetail('${item.id}')">👁</button>
+        <button class="action-icon-btn" onclick="openForm('${item.id}')">✍</button>
+        <button class="action-icon-btn btn-del-hover" onclick="stageDeletionRoutine('${item.id}')">✕</button>
+      </div>
+    </div>
+  `;
+  return card;
 }
 
-function mkRow(e) {
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td><div class="tbl-name">${esc(e.name)}${e.fit==='yes'?'<span class="fit-star">★</span>':''}</div>
-      <div style="font-family:var(--mono);font-size:9px;color:var(--dim)">${esc(e.type)}</div></td>
-    <td class="tbl-uni">${esc(e.uni)}</td>
-    <td style="font-family:var(--mono);font-size:10px;color:var(--lav)">${esc(e.country)}</td>
-    <td style="font-size:11.5px;color:var(--dim2)">${esc(e.degree||'MS')}</td>
-    <td style="font-family:var(--mono);font-size:10px;color:${FC[e.funding]||'var(--dim)'}">${esc(e.funding||'—')}</td>
-    <td><span class="spill ${SC[e.status]||'sp-na'}">${esc(e.status)}</span></td>
-    <td style="font-family:var(--mono);font-size:10px;color:var(--dim)">${esc(e.deadline||'—')}</td>
-    <td class="tbl-note">${esc(e.note||'—')}</td>
-    <td><div class="tbl-acts">
-      <button class="ibtn" onclick="openDetail('${e.id}')">View</button>
-      <button class="ibtn" onclick="openForm('${e.id}')">Edit</button>
-      <button class="ibtn del" onclick="askDelete('${e.id}')">✕</button>
-    </div></td>`;
-  return tr;
+function buildTableDataRow(item) {
+  const row = document.createElement('tr');
+  if(selectedIds.has(item.id)) row.style.background = 'rgba(59,130,246,0.06)';
+  const checked = selectedIds.has(item.id) ? 'checked' : '';
+  
+  row.innerHTML = `
+    <td><input type="checkbox" ${checked} onclick="toggleNodeSelection('${item.id}')"></td>
+    <td><div style="font-weight:700; color:#fff">${escapeContent(item.name)} ${item.fit==='yes'?'<span style="color:var(--accent)">★</span>':''}</div><div style="font-size:11px; color:var(--text-muted)">${item.type}</div></td>
+    <td><div style="font-size:13px">${escapeContent(item.uni)}</div><div style="font-size:11px; color:var(--text-muted)">${item.dept || 'Standard Division'}</div></td>
+    <td><span style="font-family:var(--font-mono); font-size:11px">${item.country}</span></td>
+    <td><span style="font-size:12px; color:#f59e0b">${item.funding}</span></td>
+    <td><span class="status-pill" style="padding:2px 8px; font-size:9px">${item.status}</span></td>
+    <td><span style="font-family:var(--font-mono); font-size:11px">${item.deadline || '—'}</span></td>
+    <td>
+      <div class="card-actions-row">
+        <button class="action-icon-btn" onclick="openDetail('${item.id}')">👁</button>
+        <button class="action-icon-btn" onclick="openForm('${item.id}')">✍</button>
+      </div>
+    </td>
+  `;
+  return row;
 }
 
-// ── VIEW TOGGLE ──
-function setView(v){
-  currentView=v;
-  document.getElementById('btnGrid').classList.toggle('active',v==='grid');
-  document.getElementById('btnTable').classList.toggle('active',v==='table');
+function toggleViewMode(val) {
+  viewPreference = val;
   renderAll();
 }
 
-// ── FORM ──
-function formVals(e) {
-  const set = (id,v) => { const el=document.getElementById(id); if(el) el.value=v||''; };
-  set('fType',e.type||'Professor'); set('fCountryF',e.country||'Canada');
-  set('fName',e.name); set('fUni',e.uni); set('fDept',e.dept); set('fDegree',e.degree||'MS');
-  set('fAreas',e.areas); set('fFundingF',e.funding||'Unknown'); set('fFit',e.fit||'no');
-  set('fStatus2',e.status||'Not Applied'); set('fDeadline',e.deadline); set('fResponse',e.response);
-  set('fEmail',e.email); set('fPhone',e.phone); set('fWeb',e.web); set('fPortal',e.portal);
-  set('fScholar',e.scholar); set('fLinkedIn',e.linkedin); set('fTwitter',e.twitter); set('fRG',e.rg);
-  set('fNote',e.note); set('fEmailDraft',e.emailDraft);
-  set('fCLabel',e.customLabel); set('fCValue',e.customValue);
+function toggleNodeSelection(id) {
+  if(selectedIds.has(id)) selectedIds.delete(id);
+  else selectedIds.add(id);
+  renderAll();
+}
+
+function clearSelectionSet() {
+  selectedIds.clear();
+  renderAll();
+}
+
+function evaluateBulkBarDock() {
+  const bar = document.getElementById('bulkBar');
+  if(selectedIds.size > 0) {
+    bar.style.display = 'flex';
+    document.getElementById('bulkCountText').textContent = `${selectedIds.size} discrete profile nodes isolated for batch execution`;
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+async function executeBulkStatusUpdate(statusVal) {
+  if(!statusVal || selectedIds.size === 0) return;
+  updateSyncMarkup('loading', 'Writing Batch Execution Matrix...');
+  try {
+    const jobs = Array.from(selectedIds).map(id => {
+      const match = entries.find(x => x.id === id);
+      const compositeObject = { ...match, status: statusVal };
+      return apiCall('PUT', `entry?id=${id}`, compositeObject);
+    });
+    await Promise.all(jobs);
+    triggerToast('Batch stage alteration executed successfully', 'success');
+    selectedIds.clear();
+    document.getElementById('bulkStatusAction').value = '';
+    loadEntries();
+  } catch(e) {
+    triggerToast(`Batch transaction dropped: ${e.message}`, 'error');
+  }
+}
+
+async function executeBulkDelete() {
+  if(selectedIds.size === 0) return;
+  if(!confirm('Authorize continuous batch destruction execution?')) return;
+  updateSyncMarkup('loading', 'Purging Isolated Clusters...');
+  try {
+    const jobs = Array.from(selectedIds).map(id => apiCall('DELETE', `entry?id=${id}`));
+    await Promise.all(jobs);
+    triggerToast('Purged targeted nodes from index', 'success');
+    selectedIds.clear();
+    loadEntries();
+  } catch(e) {
+    triggerToast(`Purge sequence failed: ${e.message}`, 'error');
+  }
+}
+
+/* ── EXCEL SHEET ENGINE OPERATIONS ── */
+function triggerExcelImport() {
+  document.getElementById('excelFileInput').click();
+}
+
+function handleExcelFile(event) {
+  const targetUploadedFile = event.target.files[0];
+  if(!targetUploadedFile) return;
+
+  const fileReader = new FileReader();
+  fileReader.onload = async function(e) {
+    try {
+      const arrayBuffer = e.target.result;
+      const loadedWorkbook = XLSX.read(arrayBuffer, { type: 'array' });
+      const internalSheetName = loadedWorkbook.SheetNames[0];
+      const dataArray = XLSX.utils.sheet_to_json(loadedWorkbook.Sheets[internalSheetName]);
+
+      if(!dataArray.length) {
+        triggerToast('Spreadsheet extraction completed but found 0 active records.', 'error');
+        return;
+      }
+
+      // Convert tabular rows to standard payload fields
+      const formattedPayloads = dataArray.map(row => ({
+        name: row['Name'] || row['name'] || 'Unspecified Upload Entry',
+        uni: row['University'] || row['university'] || row['Institution'] || 'Unknown Target',
+        type: row['Type'] || row['type'] || 'Professor',
+        country: row['Country'] || row['country'] || 'Canada',
+        dept: row['Department'] || row['dept'] || '',
+        degree: row['Degree'] || row['degree'] || 'MS',
+        areas: row['Research Areas'] || row['areas'] || '',
+        funding: row['Funding'] || row['funding'] || 'Unknown',
+        fit: String(row['Priority Target'] || row['fit'] || 'no').toLowerCase().includes('yes') ? 'yes' : 'no',
+        status: row['Status'] || row['status'] || 'Not Applied',
+        deadline: row['Deadline'] || row['deadline'] || '',
+        response: row['Response Updates'] || row['response'] || '',
+        email: row['Email'] || row['email'] || '',
+        phone: row['Phone'] || row['phone'] || '',
+        web: row['Profile URL'] || row['web'] || '',
+        portal: row['Portal URL'] || row['portal'] || '',
+        scholar: row['Google Scholar'] || '',
+        linkedin: row['LinkedIn'] || '',
+        twitter: row['Twitter Handle'] || '',
+        rg: row['ResearchGate'] || '',
+        note: row['Strategic Notes'] || '',
+        emailDraft: row['Email Outreach Draft'] || '',
+        customLabel: row['Custom Field Label'] || '',
+        customValue: row['Custom Field Value'] || ''
+      }));
+
+      updateSyncMarkup('loading', 'Injecting Spreadsheet Matrices...');
+      const responseArray = await apiCall('POST', 'entries', formattedPayloads);
+      triggerToast(`Successfully unified ${responseArray.length} entries to cloud repository.`, 'success');
+      loadEntries();
+    } catch(err) {
+      triggerToast(`Spreadsheet validation failed: ${err.message}`, 'error');
+    }
+  };
+  fileReader.readAsArrayBuffer(targetUploadedFile);
+  event.target.value = ''; // Reset input element state wrapper
+}
+
+function exportToExcel() {
+  if(!entries.length) { triggerToast('No functional scope matrices to deploy', 'error'); return; }
+  
+  // Refine schema column namings for clean business spreadsheet rendering
+  const outputRows = entries.map(x => ({
+    'Name': x.name,
+    'University': x.uni,
+    'Type': x.type,
+    'Country': x.country,
+    'Department': x.dept || '',
+    'Degree Framework': x.degree,
+    'Research Areas': x.areas || '',
+    'Funding Status': x.funding,
+    'Priority Target': x.fit === 'yes' ? 'Yes' : 'No',
+    'Status': x.status,
+    'Deadline': x.deadline || '',
+    'Response Updates': x.response || '',
+    'Email Address': x.email || '',
+    'Phone': x.phone || '',
+    'Profile URL': x.web || '',
+    'Portal URL': x.portal || '',
+    'Strategic Notes': x.note || '',
+    'Email Outreach Draft': x.emailDraft || '',
+    'Custom Field Label': x.customLabel || '',
+    'Custom Field Value': x.customValue || ''
+  }));
+
+  const sheetObject = XLSX.utils.json_to_sheet(outputRows);
+  const workbookObject = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbookObject, sheetObject, 'Intake Pipelines');
+  XLSX.writeFile(workbookObject, `MS_Tracker_Export_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+function downloadTemplate() {
+  const matrixHeaders = [[
+    'Name', 'University', 'Type', 'Country', 'Department', 'Degree Framework', 
+    'Research Areas', 'Funding Status', 'Priority Target', 'Status', 'Deadline', 
+    'Response Updates', 'Email Address', 'Phone', 'Profile URL', 'Portal URL', 
+    'Strategic Notes', 'Email Outreach Draft', 'Custom Field Label', 'Custom Field Value'
+  ]];
+  const dummyRow = [
+    'Prof. Jeremy Clark', 'Concordia University', 'Professor', 'Canada', 'CIISE', 'MS',
+    'Blockchain, Cryptography', 'Fully Funded', 'Yes', 'Not Applied', '2026-12-15',
+    'Awaiting opening date', 'jeremy.clark@concordia.ca', '', 'https://...', 'https://...',
+    'Focuses heavily on decentralized ledgers. Review his recent IEEE S&P work.', '', '', ''
+  ];
+  matrixHeaders.push(dummyRow);
+  
+  const targetSheet = XLSX.utils.aoa_to_sheet(matrixHeaders);
+  const targetBook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(targetBook, targetSheet, 'Template Specification');
+  XLSX.writeFile(targetBook, 'MS_Tracker_Import_Template.xlsx');
+}
+
+/* ── COMPONENT WINDOW MANAGEMENT CONSTRUCTS ── */
+function populateFormElements(node) {
+  const write = (id, val) => { const target = document.getElementById(id); if(target) target.value = val || ''; };
+  write('fTypeField', node.type || 'Professor');
+  write('fCountryField', node.country || 'Canada');
+  write('fName', node.name);
+  write('fUni', node.uni);
+  write('fDept', node.dept);
+  write('fDegree', node.degree || 'MS');
+  write('fAreas', node.areas);
+  write('fFundingField', node.funding || 'Unknown');
+  write('fFit', node.fit || 'no');
+  write('fStatus2', node.status || 'Not Applied');
+  write('fDeadline', node.deadline);
+  write('fResponse', node.response);
+  write('fEmail', node.email);
+  write('fPhone', node.phone);
+  write('fWeb', node.web);
+  write('fPortal', node.portal);
+  write('fScholar', node.scholar);
+  write('fLinkedIn', node.linkedin);
+  write('fTwitter', node.twitter);
+  write('fRG', node.rg);
+  write('fNote', node.note);
+  write('fEmailDraft', node.emailDraft);
+  write('fCLabel', node.customLabel);
+  write('fCValue', node.customValue);
 }
 
 function openForm(id) {
   editId = id || null;
-  document.getElementById('formTitle').textContent = id ? 'Edit Entry' : 'Add New Entry';
+  document.getElementById('formTitle').textContent = id ? 'Modify Node Parameters' : 'Instantiate Structural Profile';
   if (id) {
-    const e = entries.find(x=>x.id===id);
-    if (e) formVals(e);
+    const nodeInstance = entries.find(e => e.id === id);
+    if(nodeInstance) populateFormElements(nodeInstance);
   } else {
-    formVals({});
+    populateFormElements({});
   }
-  document.getElementById('ovForm').classList.add('on');
+  document.getElementById('ovForm').classList.add('active');
 }
-function closeForm(){ document.getElementById('ovForm').classList.remove('on'); editId=null; }
+function closeForm() { document.getElementById('ovForm').classList.remove('active'); editId = null; }
 
 async function submitForm() {
-  const g = id => document.getElementById(id).value.trim();
-  const name = g('fName'), uni = g('fUni');
-  if (!name) { toast('Name is required','error'); return; }
-  if (!uni)  { toast('University is required','error'); return; }
+  const pull = id => document.getElementById(id).value.trim();
+  const nameVal = pull('fName');
+  const uniVal = pull('fUni');
 
-  const obj = {
-    id: editId || uid(),
-    type:g('fType'), country:g('fCountryF'), name, uni,
-    dept:g('fDept'), degree:g('fDegree'), areas:g('fAreas'),
-    funding:g('fFundingF'), fit:g('fFit'), status:g('fStatus2'),
-    deadline:g('fDeadline'), response:g('fResponse'),
-    email:g('fEmail'), phone:g('fPhone'), web:g('fWeb'), portal:g('fPortal'),
-    scholar:g('fScholar'), linkedin:g('fLinkedIn'), twitter:g('fTwitter'), rg:g('fRG'),
-    note:g('fNote'), emailDraft:g('fEmailDraft'),
-    customLabel:g('fCLabel'), customValue:g('fCValue'),
+  if(!nameVal || !uniVal) { triggerToast('Mandatory criteria constraints missing (Name/Institution).', 'error'); return; }
+
+  const dataPayload = {
+    id: editId || undefined,
+    type: pull('fTypeField'), country: pull('fCountryField'), name: nameVal, uni: uniVal,
+    dept: pull('fDept'), degree: pull('fDegree'), areas: pull('fAreas'),
+    funding: pull('fFundingField'), fit: pull('fFit'), status: pull('fStatus2'),
+    deadline: pull('fDeadline'), response: pull('fResponse'),
+    email: pull('fEmail'), phone: pull('fPhone'), web: pull('fWeb'), portal: pull('fPortal'),
+    scholar: pull('fScholar'), linkedin: pull('fLinkedIn'), twitter: pull('fTwitter'), rg: pull('fRG'),
+    note: pull('fNote'), emailDraft: pull('fEmailDraft'),
+    customLabel: pull('fCLabel'), customValue: pull('fCValue')
   };
 
-  const btn = document.getElementById('submitBtn');
-  btn.innerHTML = '<span class="spin"></span> Saving…'; btn.disabled = true;
+  const cBtn = document.getElementById('submitBtn');
+  cBtn.disabled = true; cBtn.textContent = 'Committing Telemetry...';
 
   try {
-    if (editId) {
-      const updated = await api('PUT', `entry?id=${editId}`, obj);
-      const idx = entries.findIndex(x=>x.id===editId);
-      if (idx>-1) entries[idx] = updated;
-      toast('Entry updated ✓','success');
+    if(editId) {
+      await apiCall('PUT', `entry?id=${editId}`, dataPayload);
+      triggerToast('Node dimensions modified successfully', 'success');
     } else {
-      const created = await api('POST', 'entries', obj);
-      entries.unshift(created);
-      toast('Entry added ✓','success');
+      await apiCall('POST', 'entries', dataPayload);
+      triggerToast('New node structural asset indexed', 'success');
     }
-    closeForm(); renderAll();
+    closeForm(); loadEntries();
   } catch(e) {
-    toast('Save failed: '+e.message,'error');
+    triggerToast(`Write dropped: ${e.message}`, 'error');
   } finally {
-    btn.innerHTML = 'Save Entry'; btn.disabled = false;
+    cBtn.disabled = false; cBtn.textContent = 'Commit Entry';
   }
 }
 
-// ── DELETE ──
-function askDelete(id){ deleteId=id; document.getElementById('ovConfirm').classList.add('on'); }
-function closeConfirm(){ document.getElementById('ovConfirm').classList.remove('on'); deleteId=null; }
-async function confirmDelete(){
+function stageDeletionRoutine(id) { deleteId = id; document.getElementById('ovConfirm').classList.add('active'); }
+function closeConfirm() { document.getElementById('ovConfirm').classList.remove('active'); deleteId = null; }
+async function confirmDelete() {
   if(!deleteId) return;
-  const btn=document.getElementById('confirmDelBtn');
-  btn.innerHTML='<span class="spin"></span>'; btn.disabled=true;
+  const executionTargetBtn = document.getElementById('confirmDelBtn');
+  executionTargetBtn.disabled = true;
   try {
-    await api('DELETE',`entry?id=${deleteId}`);
-    entries=entries.filter(e=>e.id!==deleteId);
-    closeConfirm(); renderAll(); toast('Deleted','info');
-  } catch(e){ toast('Delete failed: '+e.message,'error'); }
-  finally{ btn.innerHTML='Delete'; btn.disabled=false; }
-}
-
-// ── DETAIL ──
-function openDetail(id){
-  const e=entries.find(x=>x.id===id); if(!e) return;
-  document.getElementById('dtName').innerHTML=`${esc(e.name)}${e.fit==='yes'?'<span class="fit-star"> ★</span>':''}`;
-  document.getElementById('dtUni').textContent=`${e.uni}${e.dept?' / '+e.dept:''} — ${e.country}`;
-  const areas=(e.areas||'').split(',').map(s=>s.trim()).filter(Boolean);
-  const chips=areas.map(a=>`<span class="chip"><span class="cdot" style="background:${dc(a)}"></span>${esc(a)}</span>`).join('');
-  function dr(lbl,val,link=false){
-    if(!val) return `<div class="drow"><span class="dlbl">${lbl}</span><span class="dval none">—</span></div>`;
-    const v=link?`<a href="${esc(val)}" target="_blank" rel="noopener">${esc(val)} ↗</a>`:esc(val);
-    return `<div class="drow"><span class="dlbl">${lbl}</span><span class="dval">${v}</span></div>`;
+    await apiCall('DELETE', `entry?id=${deleteId}`);
+    triggerToast('Target erased', 'success');
+    closeConfirm(); loadEntries();
+  } catch(e) {
+    triggerToast(`Purge operation aborted: ${e.message}`, 'error');
+  } finally {
+    executionTargetBtn.disabled = false;
   }
-  document.getElementById('dtBody').innerHTML=`
-    <div class="drow"><span class="dlbl">Status</span><span class="dval"><span class="spill ${SC[e.status]||'sp-na'}">${esc(e.status)}</span></span></div>
-    <div class="drow"><span class="dlbl">Type</span><span class="dval">${esc(e.type)} · ${esc(e.degree)}</span></div>
-    <div class="drow"><span class="dlbl">Funding</span><span class="dval" style="color:${FC[e.funding]||'var(--dim)'}">${esc(e.funding||'—')}</span></div>
-    ${areas.length?`<div class="drow"><span class="dlbl">Research</span><span class="dval"><div class="dchips">${chips}</div></span></div>`:''}
-    ${dr('Deadline',e.deadline)}${dr('Response',e.response)}
-    <hr style="border:none;border-top:1px solid var(--bdr)">
-    ${dr('Email',e.email)}${dr('Phone',e.phone)}
-    ${dr('Profile',e.web,true)}${dr('App Portal',e.portal,true)}
-    ${e.scholar||e.linkedin||e.twitter||e.rg?`<hr style="border:none;border-top:1px solid var(--bdr)">`:''}
-    ${dr('Scholar',e.scholar,true)}${dr('LinkedIn',e.linkedin,true)}
-    ${e.twitter?dr('Twitter/X',e.twitter,e.twitter.startsWith('http')):''}
-    ${dr('ResearchGate',e.rg,true)}
-    ${e.note?`<hr style="border:none;border-top:1px solid var(--bdr)"><div class="drow"><span class="dlbl">Notes</span><span class="dval" style="white-space:pre-wrap">${esc(e.note)}</span></div>`:''}
-    ${e.emailDraft?`<div class="drow"><span class="dlbl">Email Draft</span><span class="dval" style="white-space:pre-wrap;background:var(--bg);border:1px solid var(--bdr);border-radius:4px;padding:10px;display:block;font-size:12px;">${esc(e.emailDraft)}</span></div>`:''}
-    ${e.customLabel&&e.customValue?`<hr style="border:none;border-top:1px solid var(--bdr)"><div class="drow"><span class="dlbl">${esc(e.customLabel)}</span><span class="dval" style="white-space:pre-wrap">${esc(e.customValue)}</span></div>`:''}
-    <div style="font-family:var(--mono);font-size:9.5px;color:var(--dim);padding-top:8px;border-top:1px solid var(--bdr)">Added: ${new Date(e.created||Date.now()).toLocaleString()}</div>`;
-  document.getElementById('dtFoot').innerHTML=`
-    ${e.portal?`<a class="pbtn" href="${esc(e.portal)}" target="_blank" rel="noopener">Open Portal ↗</a>`:''}
-    <button class="btn-ghost" onclick="closeDetail();openForm('${e.id}')">Edit</button>
-    <button class="btn-primary" onclick="closeDetail()">Close</button>`;
-  document.getElementById('ovDetail').classList.add('on');
 }
-function closeDetail(){ document.getElementById('ovDetail').classList.remove('on'); }
 
-// ── ESC to close ──
-['ovForm','ovConfirm','ovDetail'].forEach(id=>{
-  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
-});
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){['ovForm','ovConfirm','ovDetail'].forEach(id=>document.getElementById(id).classList.remove('on'));editId=null;deleteId=null;}
-});
+function openDetail(id) {
+  const element = entries.find(x => x.id === id);
+  if(!element) return;
 
-// ── TOAST ──
-function toast(msg,type='info'){
-  const c=document.getElementById('toasts');
-  const t=document.createElement('div');
-  t.className=`toast ${type}`;t.textContent=msg;c.appendChild(t);
-  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),250);},2800);
+  document.getElementById('dtName').innerHTML = `${escapeContent(element.name)} ${element.fit==='yes'?'<span style="color:var(--accent)">★</span>':''}`;
+  document.getElementById('dtUni').textContent = `${element.uni} ${element.dept ? '/ '+element.dept : ''} — Region Code: ${element.country}`;
+
+  const renderDataField = (title, stringValue, evaluateAsLink = false) => {
+    if(!stringValue) return `<div class="detail-row"><span class="detail-label">${title}</span><span class="detail-value" style="opacity:0.25; font-style:italic">—</span></div>`;
+    const layout = evaluateAsLink ? `<a href="${escapeContent(stringValue)}" target="_blank" rel="noopener">${escapeContent(stringValue)} ↗</a>` : escapeContent(stringValue);
+    return `<div class="detail-row"><span class="detail-label">${title}</span><span class="detail-value">${layout}</span></div>`;
+  };
+
+  document.getElementById('dtBody').innerHTML = `
+    ${renderDataField('Pipeline State', element.status)}
+    ${renderDataField('Classification', `${element.type} (${element.degree})`)}
+    ${renderDataField('Fiscal Matrix', element.funding)}
+    ${renderDataField('Research Scope', element.areas)}
+    ${renderDataField('Target Cutoff', element.deadline)}
+    ${renderDataField('Log Update', element.response)}
+    <div style="margin:12px 0; border-bottom:1px dashed var(--border)"></div>
+    ${renderDataField('Direct Mail', element.email)}
+    ${renderDataField('Phone Node', element.phone)}
+    ${renderDataField('Resource Matrix', element.web, true)}
+    ${renderDataField('Processing Portal', element.portal, true)}
+    <div style="margin:12px 0; border-bottom:1px dashed var(--border)"></div>
+    ${renderDataField('Google Scholar', element.scholar, true)}
+    ${renderDataField('LinkedIn Vector', element.linkedin, true)}
+    ${renderDataField('ResearchGate', element.rg, true)}
+    <div style="margin:12px 0; border-bottom:1px dashed var(--border)"></div>
+    <div class="form-group"><label>Strategic Storage Field Context</label><div style="background:var(--bg-input); padding:12px; border-radius:8px; font-size:13px; white-space:pre-wrap; margin-top:4px">${element.note ? escapeContent(element.note) : 'No metrics mapped.'}</div></div>
+    <div class="form-group" style="margin-top:12px"><label>Outreach Package Payload</label><div style="background:var(--bg-input); font-family:var(--font-mono); padding:12px; border-radius:8px; font-size:12px; white-space:pre-wrap; margin-top:4px">${element.emailDraft ? escapeContent(element.emailDraft) : 'Payload blank.'}</div></div>
+  `;
+
+  document.getElementById('dtFoot').innerHTML = `
+    <button class="btn btn-secondary" onclick="closeDetail(); openForm('${element.id}')">Modify Layout</button>
+    <button class="btn btn-primary" onclick="closeDetail()">Close Workspace</button>
+  `;
+  document.getElementById('ovDetail').classList.add('active');
 }
+function closeDetail() { document.getElementById('ovDetail').classList.remove('active'); }
+
+function escapeContent(stringText) {
+  return String(stringText || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function triggerToast(message, variant = 'info') {
+  const container = document.getElementById('toastBox');
+  const alert = document.createElement('div');
+  alert.className = `toast-msg ${variant}`;
+  alert.textContent = message;
+  container.appendChild(alert);
+  setTimeout(() => { alert.style.opacity = '0'; setTimeout(() => alert.remove(), 300); }, 3500);
+}
+
+// Global Modal Dimmer Dismissal Handling Interceptors
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) { if(e.target === this) this.classList.remove('active'); });
+});
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') { document.querySelectorAll('.modal-overlay').forEach(o => o.classList.remove('active')); }
+});
 </script>
 </body>
 </html>

@@ -1,7 +1,9 @@
 {
   "name": "ms-tracker",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "private": true,
   "dependencies": {
-    "@supabase/supabase-js": "^2.56.0"
+    "@supabase/supabase-js": "^2.56.0",
+    "xlsx": "^0.18.5"
   }
 }

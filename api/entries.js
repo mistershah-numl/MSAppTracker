@@ -1,4 +1,4 @@
-// api/entries.js  — GET all entries | POST new entry
+// api/entries.js — GET all entries | POST new or batch entries
 const { getClient } = require('./_supabase');
 const { checkAuth, setCors } = require('./_auth');
 
@@ -17,12 +17,22 @@ module.exports = async function handler(req, res) {
       .order('created_at', { ascending: false });
 
     if (error) return res.status(500).json({ error: error.message });
-    return res.status(200).json(data);
+    return res.status(200).json(data.map(fromRow));
   }
 
-  // ── POST: create new entry ──
+  // ── POST: create new entry or batch entries ──
   if (req.method === 'POST') {
     const body = req.body;
+
+    // Handle Bulk/Batch Import Array
+    if (Array.isArray(body)) {
+      const rows = body.map(toRow);
+      const { data, error } = await sb.from('entries').insert(rows).select();
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(201).json(data.map(fromRow));
+    }
+
+    // Handle Single Insertion
     if (!body.name || !body.uni) {
       return res.status(400).json({ error: 'name and uni are required' });
     }
@@ -35,10 +45,9 @@ module.exports = async function handler(req, res) {
   res.status(405).json({ error: 'Method not allowed' });
 };
 
-// ── map JS camelCase → DB snake_case ──
 function toRow(b) {
   return {
-    id:           b.id,
+    id:           b.id || Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
     type:         b.type         || 'Professor',
     country:      b.country      || 'Canada',
     name:         b.name,
@@ -66,7 +75,6 @@ function toRow(b) {
   };
 }
 
-// ── map DB snake_case → JS camelCase ──
 function fromRow(r) {
   return {
     id:          r.id,

@@ -8,7 +8,7 @@
 <style>
 :root {
   --bg: #030712;
-  --bg-card: rgba(17, 24, 39, 0.45);
+  --bg-card: rgba(17, 24, 39, 0.4);
   --bg-input: #111827;
   --border: rgba(255, 255, 255, 0.06);
   --border-focus: #3b82f6;
@@ -22,15 +22,15 @@
   --card-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.5);
   --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --radius: 16px;
+  --radius: 14px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   background-color: var(--bg);
   background-image: 
-    radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.12) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.08) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.06) 0px, transparent 50%);
   color: var(--text);
   font-family: var(--font-sans);
   font-size: 14px;
@@ -44,7 +44,7 @@ body {
   display: flex; align-items: center; justify-content: center;
 }
 .lock-card {
-  background: rgba(17, 24, 39, 0.8); border: 1px solid var(--border); border-radius: var(--radius);
+  background: rgba(17, 24, 39, 0.85); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 40px; width: 100%; max-width: 400px; text-align: center;
   box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); backdrop-filter: blur(20px);
 }
@@ -95,7 +95,7 @@ body {
 /* ── UTILITY BUTTONS ── */
 .btn {
   font-family: var(--font-sans); font-size: 13px; font-weight: 600; padding: 8px 16px;
-  border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center;
+  border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center;
   gap: 8px; border: 1px solid transparent; transition: all 0.2s; height: 38px;
 }
 .btn-primary { background: var(--primary); color: #fff; }
@@ -146,9 +146,7 @@ body {
 .stat-box .label { font-size: 12px; color: #9ca3af; font-weight: 500; margin-top: 4px; }
 
 /* ── CONTROLS TOOLBAR ── */
-.filter-bar {
-  padding: 0 32px 24px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
-}
+.filter-bar { padding: 0 32px 24px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
 .search-container { position: relative; flex: 1; min-width: 260px; }
 .search-container input {
   width: 100%; background: var(--bg-input); color: white; border: 1px solid var(--border);
@@ -171,47 +169,36 @@ body {
 .bulk-info { font-weight: 600; color: #60a5fa; font-size: 13px; }
 .bulk-controls { display: flex; gap: 12px; align-items: center; }
 
-/* ── APPLICATIONS GRID LAYOUT ── */
+/* ── GRID PRESENTATION MODULES ── */
 .app-container { padding: 0 32px 64px; }
-.cards-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 24px; }
+.cards-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
 
-/* ── IMMERSIVE ADVANCED CARD DESIGN ── */
+/* ── CLEAN RESUME/CV STYLE CARD DESIGN ── */
 .modern-card {
   background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 24px; display: flex; flex-direction: column; gap: 14px; position: relative;
-  overflow: hidden; box-shadow: var(--card-shadow); backdrop-filter: blur(16px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 22px; display: flex; flex-direction: column; gap: 14px; position: relative;
+  cursor: pointer; box-shadow: var(--card-shadow); backdrop-filter: blur(16px); transition: all 0.2s ease;
 }
-
-/* Subtle Dynamic Colored Ambient Backglow on States */
-.modern-card[data-s="Applied"] { box-shadow: 0 4px 30px -10px rgba(59,130,246,0.15); }
-.modern-card[data-s="Offer Received"] { box-shadow: 0 4px 30px -10px rgba(16,185,129,0.15); }
-.modern-card[data-s="Interview"] { box-shadow: 0 4px 30px -10px rgba(139,92,246,0.15); }
-
 .modern-card:hover {
-  transform: translateY(-4px) scale(1.01);
-  border-color: rgba(255,255,255,0.12);
+  transform: translateY(-2px); border-color: rgba(255,255,255,0.12);
+  box-shadow: 0 12px 24px -8px rgba(0,0,0,0.7);
 }
-.modern-card[data-s="Applied"]:hover { box-shadow: 0 20px 40px -15px rgba(59,130,246,0.3); }
-.modern-card[data-s="Offer Received"]:hover { box-shadow: 0 20px 40px -15px rgba(16,185,129,0.3); }
-.modern-card[data-s="Interview"]:hover { box-shadow: 0 20px 40px -15px rgba(139,92,246,0.3); }
 
-/* Floating Selection Box */
 .card-checkbox { position: absolute; top: 24px; left: 24px; width: 16px; height: 16px; cursor: pointer; z-index: 10; display: none; }
 .modern-card.selectable { padding-left: 54px; }
 .modern-card.selectable .card-checkbox { display: block; }
 
-/* CARD INNER DOM ARCHITECTURE */
 .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 .avatar-wrapper { display: flex; gap: 14px; align-items: center; flex: 1; }
 .uni-avatar {
   width: 44px; height: 44px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
   font-weight: 700; color: var(--primary); font-size: 15px; text-transform: uppercase; flex-shrink: 0;
 }
 .title-block { display: flex; flex-direction: column; }
 .profile-name { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: -0.01em; display: inline-flex; align-items: center; gap: 4px; }
 .star-indicator { color: var(--accent); font-size: 14px; }
-.institution-text { font-size: 12.5px; color: #9ca3af; margin-top: 2px; }
+.institution-text { font-size: 13px; color: #9ca3af; margin-top: 2px; font-weight: 500; }
 
 .status-pill {
   font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase;
@@ -228,40 +215,41 @@ body {
 .tag-field { display: flex; flex-wrap: wrap; gap: 6px; }
 .meta-badge {
   font-size: 11px; background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-  border-radius: 8px; padding: 4px 10px; color: #d1d5db;
+  border-radius: 6px; padding: 3px 8px; color: #d1d5db;
 }
 .research-chip {
-  font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 8px;
-  background: rgba(59, 130, 246, 0.05); color: #93c5fd; border: 1px solid rgba(59,130,246,0.12);
+  font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03); color: #93c5fd; border: 1px solid rgba(255,255,255,0.04);
 }
 
-.card-body-note { font-size: 13px; color: #9ca3af; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 40px; }
-.card-bottom-metrics { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border); margin-top: auto; font-size: 12px; color: #6b7280; font-family: var(--font-mono); }
+.card-body-note { font-size: 13px; color: #9ca3af; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 38px; }
 
-/* ── CREATIVE INTERACTIVE ACTION OVERLAY ── */
-.card-hover-overlay {
-  position: absolute; inset: 0; background: rgba(3, 7, 18, 0.6);
-  backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center;
-  gap: 14px; opacity: 0; transform: scale(1.03); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 5; pointer-events: none;
+/* ── PRECISE CV FOOTER LINK BAR ── */
+.cv-links-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 12px; border-top: 1px solid var(--border); margin-top: auto;
 }
-.modern-card:hover .card-hover-overlay { opacity: 1; transform: scale(1); pointer-events: auto; }
+.cv-telemetry { font-size: 11px; color: #52525b; font-family: var(--font-mono); }
+.cv-icon-row { display: flex; gap: 8px; align-items: center; }
 
-.overlay-action-btn {
-  width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(31, 41, 55, 0.8); color: #fff; display: flex; align-items: center; justify-content: center;
-  font-size: 16px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3); transform: translateY(10px); opacity: 0;
+/* Mini CV Hyperlink Vectors */
+.cv-anchor-node {
+  color: #9ca3af; display: inline-flex; align-items: center; justify-content: center;
+  transition: all 0.15s ease; text-decoration: none; padding: 4px; border-radius: 6px;
 }
-.modern-card:hover .overlay-action-btn { transform: translateY(0); opacity: 1; }
-.modern-card:hover .overlay-action-btn:nth-child(1) { transition-delay: 0.02s; }
-.modern-card:hover .overlay-action-btn:nth-child(2) { transition-delay: 0.06s; }
-.modern-card:hover .overlay-action-btn:nth-child(3) { transition-delay: 0.1s; }
+.cv-anchor-node:hover { color: #fff; background: rgba(255,255,255,0.05); transform: translateY(-1px); }
+.cv-anchor-node svg { width: 15px; height: 15px; fill: currentColor; }
 
-.overlay-action-btn:hover { background: #fff; color: #000; transform: scale(1.1); }
-.overlay-action-btn.btn-del-hover:hover { background: var(--danger); color: #fff; }
+/* Administrative Inner Actions Group */
+.cv-admin-trigger-group { display: flex; gap: 4px; margin-left: 8px; border-left: 1px solid var(--border); padding-left: 8px; }
+.cv-admin-btn {
+  background: transparent; border: none; color: #4b5563; font-size: 13px;
+  cursor: pointer; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px;
+}
+.cv-admin-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+.cv-admin-btn.del:hover { color: var(--danger); background: rgba(239,68,68,0.1); }
 
-/* ── DETAILED TABLE PREFERENCE ARCHITECTURE ── */
+/* ── DETAILED COMPACT TABLE VIEW CONTAINER ── */
 .table-view-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--card-shadow); backdrop-filter: blur(12px); }
 .table-wrapper { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
@@ -269,7 +257,7 @@ th { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-tran
 td { padding: 16px 24px; border-bottom: 1px solid var(--border); color: #e5e7eb; vertical-align: middle; }
 tr:hover td { background: rgba(255,255,255,0.01); }
 
-/* ── MODAL WORKSPACES ── */
+/* ── MODALS (GLASS CONFIG) ── */
 .modal-overlay { position: fixed; inset: 0; background: rgba(3, 7, 18, 0.75); backdrop-filter: blur(12px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
 .modal-overlay.active { display: flex; }
 .modal-window { background: #0b0f19; border: 1px solid var(--border); border-radius: 24px; width: 100%; max-width: 720px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); }
@@ -297,7 +285,7 @@ tr:hover td { background: rgba(255,255,255,0.01); }
 .detail-value a { color: var(--primary); text-decoration: none; }
 .detail-value a:hover { text-decoration: underline; }
 
-/* ── LIVE NOTIFICATION TOASTS ── */
+/* ── LIVE TOASTS ── */
 .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
 .toast-msg { background: #111827; border: 1px solid var(--border); border-radius: 12px; padding: 14px 24px; font-size: 13px; color: #fff; min-width: 280px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4); animation: slideIn 0.2s ease forwards; border-left: 4px solid var(--primary); }
 .toast-msg.success { border-left-color: var(--success); }
@@ -745,19 +733,63 @@ function renderViewPresentation(dataset) {
   }
 }
 
+// ── BUILD DYNAMIC CV LINK ICON ROW ──
+function generateCvLinksRow(item) {
+  let innerIconsHtml = '';
+
+  // 1. Email vector
+  if(item.email) {
+    innerIconsHtml += `
+      <a class="cv-anchor-node" href="mailto:${item.email}" title="Transmit Direct Email Anchor" onclick="event.stopPropagation();">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      </a>`;
+  }
+  // 2. Profile Web Vector
+  if(item.web) {
+    innerIconsHtml += `
+      <a class="cv-anchor-node" href="${item.web}" target="_blank" rel="noopener" title="Open Directory Resource Index" onclick="event.stopPropagation();">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+      </a>`;
+  }
+  // 3. Submissions Processing Portal Vector
+  if(item.portal) {
+    innerIconsHtml += `
+      <a class="cv-anchor-node" href="${item.portal}" target="_blank" rel="noopener" title="Launch Processing Submission Interface" onclick="event.stopPropagation();" style="color:var(--primary)">
+        <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+      </a>`;
+  }
+  // 4. LinkedIn Node Matrix
+  if(item.linkedin) {
+    innerIconsHtml += `
+      <a class="cv-anchor-node" href="${item.linkedin}" target="_blank" rel="noopener" title="Connect LinkedIn Identity Vector" onclick="event.stopPropagation();">
+        <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+      </a>`;
+  }
+  // 5. Google Scholar Index Matrix
+  if(item.scholar) {
+    innerIconsHtml += `
+      <a class="cv-anchor-node" href="${item.scholar}" target="_blank" rel="noopener" title="Review Google Scholar Citations" onclick="event.stopPropagation();">
+        <svg viewBox="0 0 24 24"><path d="M12 2L1 9l11 7 9-5.73V17h2V9L12 2zm0 11.5L5.22 9 12 5.5 18.78 9 12 13.5zM12 16c-2.21 0-4 1.79-4 4h8c0-2.21-1.79-4-4-4z"/></svg>
+      </a>`;
+  }
+  // 6. ResearchGate/ORCID Parameters Registry
+  if(item.rg) {
+    innerIconsHtml += `
+      <a class="cv-anchor-node" href="${item.rg}" target="_blank" rel="noopener" title="Review ResearchGate Node Registry" onclick="event.stopPropagation();">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7.61 13h-1.83v-2.04H8.43V16H6.61V8h3.11c1.83 0 2.89.97 2.89 2.66 0 1.25-.66 2.06-1.72 2.36L12.56 16h-1.17zm.33-5.34c0-.93-.57-1.42-1.5-1.42H8.43v2.85h1.36c.93 0 1.5-.49 1.5-1.43z"/></svg>
+      </a>`;
+  }
+
+  return innerIconsHtml;
+}
+
 function buildModernCardComponent(item) {
   const card = document.createElement('div');
   const checkedMarkup = selectedIds.has(item.id) ? 'checked' : '';
   const adaptiveClass = selectedIds.has(item.id) ? 'modern-card selectable selected' : 'modern-card';
   
   card.className = adaptiveClass;
-  card.setAttribute('data-s', item.status);
-  if(selectedIds.size > 0) card.classList.add('selectable');
-
-  card.addEventListener('dblclick', (e) => {
-    e.preventDefault();
-    toggleNodeSelection(item.id);
-  });
+  card.setAttribute('onclick', `openDetail('${item.id}')`);
 
   const stateClassMapping = { 'Not Applied':'p-na','Applied':'p-ap','Waiting for Response':'p-wr','Interview':'p-in','Offer Received':'p-of','Rejected':'p-re','Scholarship':'p-sc' };
   const initials = item.uni ? item.uni.substring(0,2) : 'UN';
@@ -767,15 +799,11 @@ function buildModernCardComponent(item) {
     researchChips = item.areas.split(',').map(chip => `<span class="research-chip">${chip.trim()}</span>`).join('');
   }
 
+  const identityIconLinks = generateCvLinksRow(item);
+
   card.innerHTML = `
     <input type="checkbox" class="card-checkbox" ${checkedMarkup} onclick="event.stopPropagation(); toggleNodeSelection('${item.id}')">
     
-    <div class="card-hover-overlay">
-      <button class="overlay-action-btn" title="View Extended Node Details" onclick="openDetail('${item.id}')">👁</button>
-      <button class="overlay-action-btn" title="Modify Parameters" onclick="openForm('${item.id}')">✍</button>
-      <button class="overlay-action-btn btn-del-hover" title="Purge Record" onclick="stageDeletionRoutine('${item.id}')">✕</button>
-    </div>
-
     <div class="card-top">
       <div class="avatar-wrapper">
         <div class="uni-avatar">${initials}</div>
@@ -787,15 +815,22 @@ function buildModernCardComponent(item) {
       <span class="status-pill ${stateClassMapping[item.status] || 'p-na'}">${item.status}</span>
     </div>
     <div class="tag-field">
-      <span class="meta-badge" style="color:#c084fc; background:rgba(192,132,252,0.05)">${item.type}</span>
-      <span class="meta-badge" style="color:#60a5fa; background:rgba(96,165,250,0.05)">${item.country}</span>
-      <span class="meta-badge" style="color:#34d399; background:rgba(52,211,153,0.05)">${item.degree}</span>
+      <span class="meta-badge" style="color:#c084fc; background:rgba(192,132,252,0.03)">${item.type}</span>
+      <span class="meta-badge" style="color:#60a5fa; background:rgba(96,165,250,0.03)">${item.country}</span>
+      <span class="meta-badge" style="color:#34d399; background:rgba(52,211,153,0.03)">${item.degree}</span>
     </div>
     ${researchChips ? `<div class="tag-field">${researchChips}</div>` : ''}
-    <div class="card-body-note">${item.note ? escapeContent(item.note) : '<span style="color:rgba(255,255,255,0.1); font-style:italic">No descriptive logs documented</span>'}</div>
-    <div class="card-bottom-metrics">
-      <span>Target Cutoff: ${item.deadline ? item.deadline : '—'}</span>
-      <span style="color:#6b7280">${item.funding}</span>
+    <div class="card-body-note">${item.note ? escapeContent(item.note) : '<span style="color:rgba(255,255,255,0.08); font-style:italic">No descriptive logs documented</span>'}</div>
+    
+    <div class="cv-links-footer" onclick="event.stopPropagation();">
+      <div class="cv-telemetry">Cutoff: ${item.deadline ? item.deadline : '—'}</div>
+      <div class="cv-icon-row">
+        ${identityIconLinks}
+        <div class="cv-admin-trigger-group">
+          <button class="cv-admin-btn" title="Edit dimensions" onclick="openForm('${item.id}')">✍</button>
+          <button class="cv-admin-btn del" title="Purge entry" onclick="stageDeletionRoutine('${item.id}')">✕</button>
+        </div>
+      </div>
     </div>
   `;
   return card;

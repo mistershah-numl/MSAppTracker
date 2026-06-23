@@ -105,16 +105,16 @@ body {
 .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); border-color: rgba(239,68,68,0.15); }
 .btn-danger:hover { background: rgba(239, 68, 68, 0.2); }
 
-/* ── VIEW MODE TOGGLE ICONS ── */
+/* ── VIEW MODE TOGGLE BUTTONS ── */
 .view-toggle-container { display: inline-flex; background: var(--bg-input); padding: 4px; border-radius: 10px; border: 1px solid var(--border); gap: 4px; }
 .view-toggle-btn {
-  background: transparent; border: none; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+  background: transparent; border: none; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
   border-radius: 6px; color: var(--text-muted); cursor: pointer; transition: all 0.2s;
 }
 .view-toggle-btn.active { background: var(--primary); color: #fff; }
 .view-toggle-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
-/* ── STATS PANEL ── */
+/* ── METRICS PANEL ── */
 .hero-analytics { padding: 32px 32px 16px; display: grid; grid-template-columns: 2fr 3fr; gap: 24px; }
 @media(max-width:1024px) { .hero-analytics { grid-template-columns: 1fr; } }
 
@@ -178,7 +178,7 @@ body {
 .bulk-info { font-weight: 600; color: #60a5fa; font-size: 13px; }
 .bulk-controls { display: flex; gap: 12px; align-items: center; }
 
-/* ── APPLICATIONS GRID LAYOUT ── */
+/* ── LAYOUT VIEWPORT CONTAINER ── */
 .app-container { padding: 0 32px 64px; }
 .cards-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
 
@@ -233,7 +233,7 @@ body {
 
 .card-body-note { font-size: 13px; color: #9ca3af; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 38px; }
 
-/* ── REUSABLE MINI ICON VECTORS ── */
+/* ── CARD FOOTER MINI LINKS ── */
 .cv-links-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border); margin-top: auto; }
 .cv-telemetry { font-size: 11px; color: #52525b; font-family: var(--font-mono); }
 .cv-icon-row { display: flex; gap: 8px; align-items: center; }
@@ -245,21 +245,33 @@ body {
 .cv-anchor-node:hover { color: #fff; background: rgba(255,255,255,0.05); transform: translateY(-1px); }
 .cv-anchor-node svg { width: 16px; height: 16px; fill: currentColor; }
 
-/* Dedicated Modal Layout Links Bar */
+/* ── HORIZONTAL CIRCULAR QUICK LINKS ROW IN MODAL POPUPS ── */
 .modal-top-links-bar {
-  display: flex; gap: 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-  border-radius: 12px; padding: 12px 18px; margin-bottom: 12px; align-items: center; flex-wrap: wrap;
+  display: flex; justify-content: space-around; background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: 16px; padding: 16px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; gap: 12px;
 }
-.modal-top-links-bar label { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-right: 4px; }
 .modal-link-large {
-  display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;
-  color: #fff; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-  padding: 8px 14px; border-radius: 8px; text-decoration: none; transition: all 0.2s;
+  display: inline-flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; font-weight: 600;
+  color: #9ca3af; text-decoration: none; transition: all 0.2s; width: 80px; text-align: center;
 }
-.modal-link-large:hover { background: var(--primary); border-color: var(--primary); transform: translateY(-1px); }
-.modal-link-large svg { width: 16px; height: 16px; fill: currentColor; }
+.modal-icon-circle {
+  width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; color: #fff; transition: all 0.2s;
+}
+.modal-link-large:hover .modal-icon-circle { background: var(--primary); border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+.modal-link-large:hover { color: #fff; }
+.modal-icon-circle svg { width: 18px; height: 18px; fill: currentColor; }
 
-/* ── COMPACT TABLE VIEW ── */
+/* Admin Triggers inside Card Layout */
+.cv-admin-trigger-group { display: flex; gap: 4px; margin-left: 8px; border-left: 1px solid var(--border); padding-left: 8px; }
+.cv-admin-btn {
+  background: transparent; border: none; color: #4b5563; font-size: 13px;
+  cursor: pointer; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px;
+}
+.cv-admin-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+.cv-admin-btn.del:hover { color: var(--danger); background: rgba(239,68,68,0.1); }
+
+/* ── COMPACT COMPRESSED TABLE ── */
 .table-view-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--card-shadow); backdrop-filter: blur(12px); }
 .table-wrapper { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
@@ -288,12 +300,12 @@ tr:hover td { background: rgba(255,255,255,0.01); }
 .form-group textarea { resize: vertical; min-height: 80px; }
 .section-divider { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-top: 8px; letter-spacing: 0.1em; }
 
-/* ── DETAIL ROWS ── */
+/* ── FIELDS ── */
 .detail-row { display: flex; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
 .detail-label { width: 140px; font-family: var(--font-mono); font-size: 11px; color: #6b7280; text-transform: uppercase; flex-shrink: 0; }
 .detail-value { color: #f3f4f6; font-size: 14px; word-break: break-word; }
 
-/* ── TOASTS ── */
+/* ── LIVE TOASTS ── */
 .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
 .toast-msg { background: #111827; border: 1px solid var(--border); border-radius: 12px; padding: 14px 24px; font-size: 13px; color: #fff; min-width: 280px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4); animation: slideIn 0.2s ease forwards; border-left: 4px solid var(--primary); }
 .toast-msg.success { border-left-color: var(--success); }
@@ -353,7 +365,7 @@ tr:hover td { background: rgba(255,255,255,0.01); }
     </div>
     <div class="stat-box s-ap" data-filter="Applied">
       <div class="count" id="st-ap">0</div>
-      <div class="label">Transmitted</div>
+      <div class="label">Applied</div>
     </div>
     <div class="stat-box s-wr" data-filter="Waiting for Response">
       <div class="count" id="st-wr">0</div>
@@ -422,7 +434,7 @@ tr:hover td { background: rgba(255,255,255,0.01); }
 </div>
 
 <div id="bulkBar">
-  <div class="bulk-info" id="bulkCountText">0 items selected</div>
+  <div class="bulk-info" id="bulkCountText">0 lines selected</div>
   <div class="bulk-controls">
     <select class="select-input" id="bulkStatusAction" onchange="executeBulkStatusUpdate(this.value)">
       <option value="">Batch Status Update...</option>
@@ -549,15 +561,17 @@ tr:hover td { background: rgba(255,255,255,0.01); }
 
 <div class="modal-overlay" id="ovDetail">
   <div class="modal-window">
-    <div class="modal-header">
+    <div class="modal-header" style="padding-bottom: 12px;">
       <div>
         <h2 id="dtName" style="color:#fff"></h2>
         <div id="dtUni" style="font-size:12px; color:#9ca3af; margin-top:4px"></div>
       </div>
       <button class="modal-close" onclick="closeDetail()">×</button>
     </div>
-    <div id="modalTopLinksContainer" class="modal-body" style="padding-bottom: 0px; display:none;"></div>
-    <div class="modal-body" id="dtBody"></div>
+    
+    <div id="modalTopLinksContainer" class="modal-top-links-bar" style="display:none; margin: 0px 24px;"></div>
+    
+    <div class="modal-body" id="dtBody" style="padding-top: 12px;"></div>
     <div class="modal-footer" id="dtFoot"></div>
   </div>
 </div>
@@ -586,7 +600,6 @@ let deleteId = null;
 let activeStatFilter = '';
 let viewPreference = 'grid';
 
-// Reusable SVG Paths Object Map
 const SVG_ICONS = {
   email: `<svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`,
   web: `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>`,
@@ -626,14 +639,14 @@ async function apiCall(method, route, data) {
 }
 
 async function loadEntries() {
-  updateSyncMarkup('loading', 'Syncing Matrix Arrays...');
+  updateSyncMarkup('loading', 'Syncing Cluster Array...');
   try {
     entries = await apiCall('GET', 'entries');
-    updateSyncMarkup('ok', 'Nodes Online');
+    updateSyncMarkup('ok', 'Nodes Operational');
     renderAll();
   } catch(e) {
-    updateSyncMarkup('err', 'Serving Stored Snapshot');
-    triggerToast('Network sync dropped. Using offline cache.', 'error');
+    updateSyncMarkup('err', 'Array Localised');
+    triggerToast('Remote sync interrupted. Serving local snapshot.', 'error');
     const locallyStored = localStorage.getItem('ms_entries_cache');
     if(locallyStored) { entries = JSON.parse(locallyStored); renderAll(); }
   }
@@ -687,7 +700,7 @@ function renderAll() {
   const evaluationRatio = metrics.total > 0 ? Math.round((evaluatedSubmissions / metrics.total) * 100) : 0;
   document.getElementById('metricsPercentage').textContent = `${evaluationRatio}%`;
   document.getElementById('metricsBar').style.width = `${evaluationRatio}%`;
-  document.getElementById('metricsRatio').textContent = `${evaluatedSubmissions} completed / ${metrics.total} tracked lines`;
+  document.getElementById('metricsRatio').textContent = `${evaluatedSubmissions} applied / ${metrics.total} total lines`;
 
   const query = document.getElementById('searchInp').value.toLowerCase();
   const filterCountry = document.getElementById('fCountry').value;
@@ -765,11 +778,11 @@ function generateCvLinksRow(item, sizeClass = '') {
   };
   
   if(item.email) html += mapIcon('email', `mailto:${item.email}`, 'Email Address');
-  if(item.web) html += mapIcon('web', item.web, 'Website Directory Profile');
+  if(item.web) html += mapIcon('web', item.web, 'Website Profile');
   if(item.portal) html += mapIcon('portal', item.portal, 'Application Link Portal');
-  if(item.linkedin) html += mapIcon('linkedin', item.linkedin, 'LinkedIn Profile Link');
+  if(item.linkedin) html += mapIcon('linkedin', item.linkedin, 'LinkedIn Profile');
   if(item.scholar) html += mapIcon('scholar', item.scholar, 'Google Scholar Index');
-  if(item.rg) html += mapIcon('rg', item.rg, 'ResearchGate Portfolio Profile');
+  if(item.rg) html += mapIcon('rg', item.rg, 'ResearchGate Profile');
   
   return html;
 }
@@ -818,8 +831,8 @@ function buildModernCardComponent(item) {
       <div class="cv-icon-row">
         ${identityIconLinks}
         <div class="cv-admin-trigger-group">
-          <button class="cv-admin-btn" title="Edit dimensions" onclick="openForm('${item.id}')">✍</button>
-          <button class="cv-admin-btn del" title="Purge entry" onclick="stageDeletionRoutine('${item.id}')">✕</button>
+          <button class="cv-admin-btn" title="Edit details" onclick="openForm('${item.id}')">✍</button>
+          <button class="cv-admin-btn del" title="Delete entry" onclick="stageDeletionRoutine('${item.id}')">✕</button>
         </div>
       </div>
     </div>
@@ -872,7 +885,7 @@ function evaluateBulkBarDock() {
   const bar = document.getElementById('bulkBar');
   if(selectedIds.size > 0) {
     bar.style.display = 'flex';
-    document.getElementById('bulkCountText').textContent = `${selectedIds.size} lines selected`;
+    document.getElementById('bulkCountText').textContent = `${selectedIds.size} selected lines`;
   } else {
     bar.style.display = 'none';
   }
@@ -880,7 +893,7 @@ function evaluateBulkBarDock() {
 
 async function executeBulkStatusUpdate(statusVal) {
   if(!statusVal || selectedIds.size === 0) return;
-  updateSyncMarkup('loading', 'Writing Batch Metrics Updates...');
+  updateSyncMarkup('loading', 'Updating Status Changes...');
   try {
     const jobs = Array.from(selectedIds).map(id => {
       const match = entries.find(x => x.id === id);
@@ -888,31 +901,31 @@ async function executeBulkStatusUpdate(statusVal) {
       return apiCall('PUT', `entry?id=${id}`, compositeObject);
     });
     await Promise.all(jobs);
-    triggerToast('Batch sync completed successfully', 'success');
+    triggerToast('Batch configurations successfully saved.', 'success');
     selectedIds.clear();
     document.getElementById('bulkStatusAction').value = '';
     loadEntries();
   } catch(e) {
-    triggerToast(`Batch write dropped: ${e.message}`, 'error');
+    triggerToast(`Batch task interrupted: ${e.message}`, 'error');
   }
 }
 
 async function executeBulkDelete() {
   if(selectedIds.size === 0) return;
-  if(!confirm('Are you sure you want to delete all selected items?')) return;
-  updateSyncMarkup('loading', 'Purging Records...');
+  if(!confirm('Are you sure you want to delete all selected entries?')) return;
+  updateSyncMarkup('loading', 'Deleting Records...');
   try {
     const jobs = Array.from(selectedIds).map(id => apiCall('DELETE', `entry?id=${id}`));
     await Promise.all(jobs);
-    triggerToast('Purged targeted lines', 'success');
+    triggerToast('Deleted selected items.', 'success');
     selectedIds.clear();
     loadEntries();
   } catch(e) {
-    triggerToast(`Sequence dropped: ${e.message}`, 'error');
+    triggerToast(`Sequence failed: ${e.message}`, 'error');
   }
 }
 
-/* ── SPREADSHEET ENGINE EXCHANGES ── */
+/* ── SHEET OPERATION CORES ── */
 function triggerExcelImport() { document.getElementById('excelFileInput').click(); }
 function handleExcelFile(event) {
   const targetUploadedFile = event.target.files[0];
@@ -954,7 +967,7 @@ function handleExcelFile(event) {
 
       updateSyncMarkup('loading', 'Uploading Sheet Configurations...');
       await apiCall('POST', 'entries', formattedPayloads);
-      triggerToast('Spreadsheet entries integrated into database successfully.', 'success');
+      triggerToast('Spreadsheet entries saved into database successfully.', 'success');
       loadEntries();
     } catch(err) { triggerToast(`Validation error: ${err.message}`, 'error'); }
   };
@@ -963,7 +976,7 @@ function handleExcelFile(event) {
 }
 
 function exportToExcel() {
-  if(!entries.length) { triggerToast('No scope indices documented to package.', 'error'); return; }
+  if(!entries.length) { triggerToast('No functional lines to deploy.', 'error'); return; }
   const outputRows = entries.map(x => ({
     'Name': x.name, 'University': x.uni, 'Type': x.type, 'Country': x.country, 'Department': x.dept || '', 'Degree Framework': x.degree, 'Research Areas': x.areas || '', 'Funding Status': x.funding, 'Priority Target': x.fit === 'yes' ? 'Yes' : 'No', 'Status': x.status, 'Deadline': x.deadline || '', 'Response Updates': x.response || '', 'Email Address': x.email || '', 'Phone': x.phone || '', 'Profile URL': x.web || '', 'Portal URL': x.portal || '', 'Google Scholar URL': x.scholar || '', 'LinkedIn URL': x.linkedin || '', 'X / Twitter Handle': x.twitter || '', 'ResearchGate URL': x.rg || '', 'Notes': x.note || '', 'Email Outreach Draft': x.emailDraft || '', 'Custom Field Label': x.customLabel || '', 'Custom Field Value': x.customValue || ''
   }));
@@ -975,15 +988,15 @@ function exportToExcel() {
 
 function downloadTemplate() {
   const matrixHeaders = [[ 'Name', 'University', 'Type', 'Country', 'Department', 'Degree Framework', 'Research Areas', 'Funding Status', 'Priority Target', 'Status', 'Deadline', 'Response Updates', 'Email Address', 'Phone', 'Profile URL', 'Portal URL', 'Google Scholar URL', 'LinkedIn URL', 'X / Twitter Handle', 'ResearchGate URL', 'Notes', 'Email Outreach Draft', 'Custom Field Label', 'Custom Field Value' ]];
-  const dummyRow = [ 'Prof. Jeremy Clark', 'Concordia University', 'Professor', 'Canada', 'CIISE', 'MS', 'Blockchain, Cryptography', 'Fully Funded', 'Yes', 'Not Applied', '2026-12-15', '', 'jeremy.clark@concordia.ca', '', 'https://...', 'https://...', '', '', '', '', 'Alignment matches Mitacs framework perfectly.', '', '', '' ];
+  const dummyRow = [ 'Prof. Jeremy Clark', 'Concordia University', 'Professor', 'Canada', 'CIISE', 'MS', 'Blockchain, Cryptography', 'Fully Funded', 'Yes', 'Not Applied', '2026-12-15', '', 'jeremy.clark@concordia.ca', '', 'https://...', 'https://...', '', '', '', '', 'Alignment matches framework.', '', '', '' ];
   matrixHeaders.push(dummyRow);
   const targetSheet = XLSX.utils.aoa_to_sheet(matrixHeaders);
   const targetBook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(targetBook, targetSheet, 'Import Structural Guide');
+  XLSX.utils.book_append_sheet(targetBook, targetSheet, 'Import Guide');
   XLSX.writeFile(targetBook, 'MS_Tracker_Import_Template.xlsx');
 }
 
-/* ── PROFILE MODAL MANAGER ── */
+/* ── DIALOG BOX FRAMEWORKS ── */
 function populateFormElements(node) {
   const write = (id, val) => { const target = document.getElementById(id); if(target) target.value = val || ''; };
   write('fTypeField', node.type || 'Professor');
@@ -1013,24 +1026,24 @@ function closeForm() { document.getElementById('ovForm').classList.remove('activ
 async function submitForm() {
   const pull = id => document.getElementById(id).value.trim();
   const nameVal = pull('fName'); const uniVal = pull('fUni');
-  if(!nameVal || !uniVal) { triggerToast('Name and University are mandatory inputs.', 'error'); return; }
+  if(!nameVal || !uniVal) { triggerToast('Name and University are required.', 'error'); return; }
 
   const dataPayload = {
     id: editId || undefined, type: pull('fTypeField'), country: pull('fCountryField'), name: nameVal, uni: uniVal, dept: pull('fDept'), degree: pull('fDegree'), areas: pull('fAreas'), funding: pull('fFundingField'), fit: pull('fFit'), status: pull('fStatus2'), deadline: pull('fDeadline'), response: pull('fResponse'), email: pull('fEmail'), phone: pull('fPhone'), web: pull('fWeb'), portal: pull('fPortal'), scholar: pull('fScholar'), linkedin: pull('fLinkedIn'), twitter: pull('fTwitter'), rg: pull('fRG'), note: pull('fNote'), emailDraft: pull('fEmailDraft'), customLabel: pull('fCLabel'), customValue: pull('fCValue')
   };
 
   const cBtn = document.getElementById('submitBtn');
-  cBtn.disabled = true; cBtn.textContent = 'Saving Context...';
+  cBtn.disabled = true; cBtn.textContent = 'Saving Changes...';
   try {
     if(editId) {
       await apiCall('PUT', `entry?id=${editId}`, dataPayload);
-      triggerToast('Entry modifications logged.', 'success');
+      triggerToast('Changes logged successfully.', 'success');
     } else {
       await apiCall('POST', 'entries', dataPayload);
-      triggerToast('New application entry tracked successfully.', 'success');
+      triggerToast('New entry recorded successfully.', 'success');
     }
     closeForm(); loadEntries();
-  } catch(e) { triggerToast(`Database drop error: ${e.message}`, 'error'); }
+  } catch(e) { triggerToast(`Database write dropped: ${e.message}`, 'error'); }
   finally { cBtn.disabled = false; cBtn.textContent = 'Save Entry'; }
 }
 
@@ -1044,23 +1057,28 @@ async function confirmDelete() {
     await apiCall('DELETE', `entry?id=${deleteId}`);
     triggerToast('Entry deleted successfully.', 'success');
     closeConfirm(); closeDetail(); loadEntries();
-  } catch(e) { triggerToast(`Operation dropped: ${e.message}`, 'error'); }
+  } catch(e) { triggerToast(`Operation failed: ${e.message}`, 'error'); }
   finally { executionTargetBtn.disabled = false; }
 }
 
+/* HORIZONTAL SPACING AND TITLED LARGE ICONS ENGINE */
 function buildModalTopLinksRow(item) {
   let html = '';
-  const mapLargeLink = (key, url, title, text) => {
+  const mapLargeLink = (key, url, text) => {
     if(!url) return '';
-    return `<a class="modal-link-large" href="${url.startsWith('http') || key==='email' ? '' : 'https://'}${url}" ${key==='email' ? '' : 'target="_blank" rel="noopener"'} title="${title}">${SVG_ICONS[key]} ${text}</a>`;
+    return `
+      <a class="modal-link-large" href="${url.startsWith('http') || key==='email' ? '' : 'https://'}${url}" ${key==='email' ? '' : 'target="_blank" rel="noopener"'} title="${text}">
+        <div class="modal-icon-circle">${SVG_ICONS[key]}</div>
+        <span>${text}</span>
+      </a>`;
   };
   
-  if(item.email) html += mapLargeLink('email', `mailto:${item.email}`, 'Email Channel', 'Email Address');
-  if(item.web) html += mapLargeLink('web', item.web, 'Website', 'Profile Page');
-  if(item.portal) html += mapLargeLink('portal', item.portal, 'Portal Hub', 'Application Portal');
-  if(item.linkedin) html += mapLargeLink('linkedin', item.linkedin, 'LinkedIn Profile', 'LinkedIn');
-  if(item.scholar) html += mapLargeLink('scholar', item.scholar, 'Google Scholar Profile', 'Scholar Citations');
-  if(item.rg) html += mapLargeLink('rg', item.rg, 'ResearchGate Profile', 'ResearchGate');
+  if(item.email) html += mapLargeLink('email', `mailto:${item.email}`, 'Email');
+  if(item.web) html += mapLargeLink('web', item.web, 'Website');
+  if(item.portal) html += mapLargeLink('portal', item.portal, 'Portal');
+  if(item.linkedin) html += mapLargeLink('linkedin', item.linkedin, 'LinkedIn');
+  if(item.scholar) html += mapLargeLink('scholar', item.scholar, 'Scholar');
+  if(item.rg) html += mapLargeLink('rg', item.rg, 'ResearchGate');
   
   return html;
 }
@@ -1072,11 +1090,11 @@ function openDetail(id) {
   document.getElementById('dtName').innerHTML = `${escapeContent(element.name)} ${element.fit==='yes'?'<span style="color:var(--accent)">★</span>':''}`;
   document.getElementById('dtUni').textContent = `${element.uni} ${element.dept ? '/ '+element.dept : ''} — ${element.country}`;
 
-  // Build top clean anchor navigation port inside read view overlay modal component canvas
+  // Horizontal links loader integration core
   const linksHtml = buildModalTopLinksRow(element);
   const linksBox = document.getElementById('modalTopLinksContainer');
   if(linksHtml) {
-    linksBox.innerHTML = `<label>Quick Links Port:</label>${linksHtml}`;
+    linksBox.innerHTML = linksHtml;
     linksBox.style.display = 'flex';
   } else {
     linksBox.style.display = 'none';
@@ -1097,14 +1115,13 @@ function openDetail(id) {
     <div style="margin:12px 0; border-bottom:1px dashed var(--border)"></div>
     ${element.phone ? renderDataField('Office Phone', element.phone) : ''}
     <div class="form-group" style="margin-top:12px;"><label>Profile Notes</label><div style="background:var(--bg-input); padding:12px; border-radius:8px; font-size:13px; white-space:pre-wrap; margin-top:4px; line-height:1.6; color:#d1d5db;">${element.note ? escapeContent(element.note) : 'No notes documented.'}</div></div>
-    <div class="form-group" style="margin-top:16px;"><label>Email Outreach Template</label><div style="background:var(--bg-input); font-family:var(--font-mono); padding:12px; border-radius:8px; font-size:12px; white-space:pre-wrap; margin-top:4px; color:#9ca3af; border:1px solid var(--border); line-height:1.5;">${element.emailDraft ? escapeContent(element.emailDraft) : 'Outreach payload block blank.'}</div></div>
+    <div class="form-group" style="margin-top:16px;"><label>Email Outreach Template</label><div style="background:var(--bg-input); font-family:var(--font-mono); padding:12px; border-radius:8px; font-size:12px; white-space:pre-wrap; margin-top:4px; color:#9ca3af; border:1px solid var(--border); line-height:1.5;">${element.emailDraft ? escapeContent(element.emailDraft) : 'Outreach draft text block is empty.'}</div></div>
   `;
 
-  // Explicit bottom action button layout configurations mapped safely here
   document.getElementById('dtFoot').innerHTML = `
     <button class="btn btn-danger" onclick="stageDeletionRoutine('${element.id}')">Delete</button>
-    <button class="btn btn-secondary" onclick="closeDetail(); openForm('${element.id}')">Edit Profile</button>
-    <button class="btn btn-primary" onclick="closeDetail()">Close Window</button>
+    <button class="btn btn-secondary" onclick="closeDetail(); openForm('${element.id}')">Edit Entry</button>
+    <button class="btn btn-primary" onclick="closeDetail()">Close</button>
   `;
   document.getElementById('ovDetail').classList.add('active');
 }

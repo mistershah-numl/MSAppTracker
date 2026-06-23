@@ -999,7 +999,7 @@ function handleExcelFile(event) {
 function exportToExcel() {
   if(!entries.length) { triggerToast('No functional lines to deploy.', 'error'); return; }
   const outputRows = entries.map(x => ({
-    'Name': x.name, 'University': x.uni, 'Type': x.type, 'Country': x.country, 'Department': x.dept || '', 'Degree Framework': x.degree, 'Research Areas': x.areas || '', 'Funding Status': x.funding, 'Priority Target': x.fit === 'yes' ? 'Yes' : 'No', 'Status': x.status, 'Deadline': x.deadline || '', 'Response Updates': x.response || '', 'Email Address': x.email || '', 'Phone': x.phone || '', 'Profile URL': x.web || '', 'Portal URL': x.portal || '', 'Google Scholar URL': x.scholar || '', 'LinkedIn URL': x.linkedin || '', 'X / Twitter Handle': x.twitter || '', 'ResearchGate URL': x.rg || '', 'Notes': x.note || '', 'Email Outreach Draft': x.emailDraft || '', 'Custom Field Label': x.customLabel || '', 'Custom Field Value': x.customValue || ''
+    'Name': x.name, 'University': x.uni, 'Type': x.type, 'Country': x.country, 'Department': x.dept || '', 'Degree Framework': x.degree, 'Research Areas': x.areas || '', 'Funding Status': x.funding, 'Priority Target': x.fit === 'yes' ? 'Yes' : 'No', 'Status': x.status, 'Deadline': x.deadline || '', 'Response Updates': x.response || '', 'Email Address': x.email || '', 'Phone': x.phone || '', 'Profile URL': x.web || '', 'Portal URL': x.portal || '', 'Google Scholar URL': x.scholar || '', 'LinkedIn URL': x.linkedin || '', 'X / Twitter Handle': x.twitter || '', 'ResearchGate URL': x.rg || '', 'Notes': x.note || '', 'Email Outreach Draft': x.emailDraft || '', 'Custom Field Label': x.customFieldLabel || '', 'Custom Field Value': x.customValue || ''
   }));
   const sheetObject = XLSX.utils.json_to_sheet(outputRows);
   const workbookObject = XLSX.utils.book_new();
@@ -1112,7 +1112,7 @@ function openDetail(id) {
   document.getElementById('dtUni').textContent = `${element.uni} ${element.dept ? '/ '+element.dept : ''} — ${element.country}`;
 
   const mapButton = document.getElementById('dtMapBtn');
-  const universityInitials = element.uni ? element.uni.replace(/university of/ii, '').trim().substring(0, 2).toUpperCase() : 'UN';
+  const universityInitials = element.uni ? element.uni.replace(/university of/i, '').trim().substring(0, 2).toUpperCase() : 'UN';
   mapButton.textContent = universityInitials;
   mapButton.onclick = () => {
     const mapsQueryUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(element.uni)}`;
@@ -1154,7 +1154,6 @@ function openDetail(id) {
 }
 function closeDetail() { document.getElementById('ovDetail').classList.remove('active'); }
 
-// Simple utility function to keep layout string injections clean
 function escapeContent(stringText) {
   if (!stringText) return '';
   return String(stringText).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

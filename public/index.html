@@ -233,10 +233,11 @@ body {
 
 .card-body-note { font-size: 13px; color: #9ca3af; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 38px; }
 
-/* ── CARD PASSIVE FOOTER LINK ELEMENTS ── */
-.cv-links-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border); margin-top: auto; }
-.cv-telemetry { font-size: 11px; color: #52525b; font-family: var(--font-mono); }
-.cv-icon-row { display: flex; gap: 8px; align-items: center; }
+/* ── CARD FOOTER TWO-ROW SPLIT ── */
+.cv-links-footer { display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border); margin-top: auto; }
+.cv-footer-upper { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #52525b; font-family: var(--font-mono); }
+.cv-footer-lower { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.cv-icon-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; flex: 1; }
 
 .cv-anchor-node {
   display: inline-flex; align-items: center; justify-content: center;
@@ -278,7 +279,7 @@ body {
 }
 .uni-logo-btn:hover { background: var(--primary); color: #fff; box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3); transform: scale(1.05); }
 
-.cv-admin-trigger-group { display: flex; gap: 4px; margin-left: 8px; border-left: 1px solid var(--border); padding-left: 8px; }
+.cv-admin-trigger-group { display: flex; gap: 4px; border-left: 1px solid var(--border); padding-left: 8px; margin-left: auto; }
 .cv-admin-btn {
   background: transparent; border: none; color: #4b5563; font-size: 13px;
   cursor: pointer; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px;
@@ -817,7 +818,7 @@ function buildModernCardComponent(item) {
   card.setAttribute('onclick', `openDetail('${item.id}')`);
 
   const stateClassMapping = { 'Not Applied':'p-na','Applied':'p-ap','Waiting for Response':'p-wr','Interview':'p-in','Offer Received':'p-of','Rejected':'p-re','Scholarship':'p-sc' };
-  const initials = item.uni ? item.uni.substring(0,2) : 'UN';
+  const initials = item.uni ? item.uni.replace(/(university of|the university of|université du|université de)/gi, '').trim().substring(0,2).toUpperCase() : 'UN';
 
   let researchChips = '';
   if(item.areas) {
@@ -848,9 +849,13 @@ function buildModernCardComponent(item) {
     <div class="card-body-note">${item.note ? escapeContent(item.note) : '<span style="color:rgba(255,255,255,0.08); font-style:italic">No notes documented.</span>'}</div>
     
     <div class="cv-links-footer" onclick="event.stopPropagation();">
-      <div class="cv-telemetry">Deadline: ${item.deadline ? item.deadline : '—'}</div>
-      <div class="cv-icon-row">
-        ${identityIconLinks}
+      <div class="cv-footer-upper">
+        <div class="cv-telemetry">Deadline: ${item.deadline ? item.deadline : '—'}</div>
+      </div>
+      <div class="cv-footer-lower">
+        <div class="cv-icon-row">
+          ${identityIconLinks}
+        </div>
         <div class="cv-admin-trigger-group">
           <button class="cv-admin-btn" title="Edit details" onclick="openForm('${item.id}')">✍</button>
           <button class="cv-admin-btn del" title="Delete entry" onclick="stageDeletionRoutine('${item.id}')">✕</button>
@@ -1112,10 +1117,10 @@ function openDetail(id) {
   document.getElementById('dtUni').textContent = `${element.uni} ${element.dept ? '/ '+element.dept : ''} — ${element.country}`;
 
   const mapButton = document.getElementById('dtMapBtn');
-  const universityInitials = element.uni ? element.uni.replace(/university of/i, '').trim().substring(0, 2).toUpperCase() : 'UN';
+  const universityInitials = element.uni ? element.uni.replace(/(university of|the university of|université du|université de)/gi, '').trim().substring(0, 2).toUpperCase() : 'UN';
   mapButton.textContent = universityInitials;
   mapButton.onclick = () => {
-    const mapsQueryUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(element.uni)}`;
+    const mapsQueryUrl = `http://googleusercontent.com/maps.google.com/?q=${encodeURIComponent(element.uni)}`;
     window.open(mapsQueryUrl, '_blank', 'noopener');
   };
 
@@ -1140,7 +1145,7 @@ function openDetail(id) {
     ${renderDataField('Research Areas', element.areas)}
     ${renderDataField('Deadline Date', element.deadline)}
     ${renderDataField('Updates Logs', element.response)}
-    ${element.phone ? `<div style="margin:6px 0; border-bottom:1px dashed var(--border)"></div>${renderDataField('Office Phone', element.phone)}` : ''}
+    ${element.phone ? `<div style="margin:6px 0; border-bottom:1px solid var(--border)"></div>${renderDataField('Office Phone', element.phone)}` : ''}
     <div class="form-group" style="margin-top:10px;"><label>Profile Notes</label><div style="background:var(--bg-input); padding:10px; border-radius:8px; font-size:13px; white-space:pre-wrap; margin-top:4px; line-height:1.5; color:#d1d5db;">${element.note ? escapeContent(element.note) : 'No notes documented.'}</div></div>
     <div class="form-group" style="margin-top:12px;"><label>Email Outreach Template</label><div style="background:var(--bg-input); font-family:var(--font-mono); padding:10px; border-radius:8px; font-size:12px; white-space:pre-wrap; margin-top:4px; color:#9ca3af; border:1px solid var(--border); line-height:1.4;">${element.emailDraft ? escapeContent(element.emailDraft) : 'Outreach draft text block is empty.'}</div></div>
   `;
